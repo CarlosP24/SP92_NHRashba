@@ -37,3 +37,7 @@ systems["nh_odd"] = System(systems["hermitian_chain"];
 systems["nh_odd_left"] = System(systems["hermitian_chain"]; 
     NH_params = NH_Lead_Params(; Γodd_left = 1.1, Γodd_right = 0.9, Γeven = 0.0),
 )
+
+systems["nh_odd_right"] = System(systems["hermitian_chain"]; 
+    NH_params = NH_Lead_Params(; Γodd_left = 0.9, Γodd_right = 1.1, Γeven = 0.0),
+)
