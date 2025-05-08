@@ -59,6 +59,7 @@ function fig_conductance(name::String; maxG = 0.05, trans_coef = 0.01)
     return fig
 end
 
+##
 fig = fig_conductance("hermitian_chain")
 save("plots/figures/conductance_hermitian_chain.pdf", fig)
 fig
@@ -81,4 +82,13 @@ fig
 ##
 fig = fig_conductance("nh_odd_right"; trans_coef = 1e4, maxG = .01)
 save("plots/figures/conductance_nh_odd_right.pdf", fig)
+fig
+
+##
+fig = fig_conductance("nh_odd_superleft"; trans_coef = 1e4, maxG = .01)
+save("plots/figures/conductance_nh_odd_superleft.pdf", fig)
+fig
+
+##
+fig = fig_conductance("Wire_base"; maxG = 1e-3)
 fig

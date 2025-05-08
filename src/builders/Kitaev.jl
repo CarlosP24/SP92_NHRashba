@@ -1,10 +1,3 @@
-using Quantica: σ
-
-τx = σ(1)
-τy = σ(2)
-τz = σ(3)
-τ0 = σ(0)
-
 @with_kw struct Kitaev_Params
     μ::Float64 = 0.0
     t::Float64 = 1.0
@@ -12,15 +5,17 @@ using Quantica: σ
     N::Int = 25
 end
 
+build(params::Kitaev_Params) = build_Kitaev(params)
+
 function build_Kitaev(params::Kitaev_Params)
     @unpack µ, t, Δ, N = params
 
     lat = LP.linear(; ) |> supercell(N) |> supercell()
 
-    kinetic = @onsite((; µ = 0) -> -µ * τz) + @hopping((; t = t) -> -t * τz)
-    pairing1 = @hopping((; Δ = Δ) -> -Δ * 1im * τy;
+    kinetic = @onsite((; µ = 0) -> -µ * τz) + @hopping((; t = 0) -> -t * τz)
+    pairing1 = @hopping((; Δ = 0) -> -Δ * 1im * τy;
     region = (r, dr) -> dr[1] > 0 )
-    pairing2 = @hopping((; Δ = Δ) -> Δ * 1im * τy;
+    pairing2 = @hopping((; Δ = 0) -> Δ * 1im * τy;
     region = (r, dr) -> dr[1] < 0 )
 
     h = lat |> hamiltonian(kinetic + pairing1 + pairing2; orbitals = 2)
@@ -38,7 +33,7 @@ end
 
 add_NH_lead!(params::NH_Lead_Params) = h -> add_NH_lead!(h, params)
 function add_NH_lead!(h::Quantica.AbstractHamiltonian, params::NH_Lead_Params)
-    @unpack Γodd_right, Γodd_left, Γeven_right, Γeven_left = params
+    @unpack Γodd_right, Γodd_left, Γeven_right, Γeven_left, dims = params
 
     nh_odd_right = @hopping!(
         (t, r, dr; Γodd_right = Γodd_right) -> t + Γodd_right * τ0;

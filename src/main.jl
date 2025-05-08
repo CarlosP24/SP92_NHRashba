@@ -1,10 +1,22 @@
 using JLD2
 @everywhere begin
     using Quantica
+    using Quantica: σ
+    σ0τz = σ(3, 0)
+    σzτ0 = σ(0, 3)
+    σyτz = σ(3, 2)
+    σ0τx = σ(1, 0)
+    σ0τ0 = σ(0, 0)
+    σyτ0 = σ(0, 2)
+    τz = σ(3)
+    τx = σ(1)
+    τy = σ(2)
+    τ0 = σ(0)
     using ProgressMeter, Parameters
     using LinearAlgebra, Arpack
 
     include("builders/Kitaev.jl")
+    include("builders/Wire.jl")
     include("builders/leads.jl")
 
     include("models/systems.jl")

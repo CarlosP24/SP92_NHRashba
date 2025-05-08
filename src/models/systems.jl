@@ -13,8 +13,8 @@ end
 
 @with_kw struct System
     params::Params = Params()
-    chain_params::Kitaev_Params = Kitaev_Params(; )
-    NH_params::NH_Lead_Params = NH_Lead_Params(; )
+    chain_params = Kitaev_Params(; )
+    NH_params = NH_Lead_Params(; )
     lead_params::Lead_Params = Lead_Params(; )
 end
 
@@ -44,4 +44,9 @@ systems["nh_odd_right"] = System(systems["hermitian_chain"];
 
 systems["nh_odd_superleft"] = System(systems["hermitian_chain"]; 
     NH_params = NH_Lead_Params(; Γodd_left = 2, Γodd_right = 1, Γeven = 0.0),
+)
+
+systems["Wire_base"] = System(
+    chain_params = Wire_Params(; L = 2000, Δ = 0.23),
+    NH_params = wire_nh_lead_params(; γ0 = 0.0, γy = 0.0),
 )
