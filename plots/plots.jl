@@ -77,3 +77,8 @@ fig
 fig = fig_conductance("nh_odd_left"; trans_coef = 1e4, maxG = .01)
 save("plots/figures/conductance_nh_odd_left.pdf", fig)
 fig
+
+##
+fig = fig_conductance("nh_odd_right"; trans_coef = 1e4, maxG = .01)
+save("plots/figures/conductance_nh_odd_right.pdf", fig)
+fig
