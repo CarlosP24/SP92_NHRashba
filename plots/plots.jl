@@ -69,7 +69,7 @@ save("plots/figures/conductance_nh_even.pdf", fig)
 fig
 
 ##
-fig = fig_conductance("nh_odd"; trans_coef = 1, maxG = 1)
+fig = fig_conductance("nh_odd"; trans_coef = 1000, maxG = .01)
 save("plots/figures/conductance_nh_odd.pdf", fig)
 fig
 
