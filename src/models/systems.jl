@@ -1,5 +1,5 @@
 @with_kw struct Params
-    µrng = subdiv(0, 4, 401)
+    µrng = subdiv(-4, 4, 401)
     ωrng = subdiv(-5, 5, 401) .+ 1e-2im
     outdir = "data"
 end

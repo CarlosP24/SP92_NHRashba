@@ -42,9 +42,9 @@ function fig_conductance(name::String; maxG = 0.05, trans_coef = 0.01)
         end
         ax, hmap = plot_conductance(fig[i, j], Gs[i, j]', ωrng, μrng; colorrange = (-lim, lim))
         i == j && plot_over_spectrum(ax, eres.system.params.μrng, Es)
-        vlines!(ax, 1; color = :darkgreen, linestyle = :dash)
+        #vlines!(ax, 1; color = :darkgreen, linestyle = :dash)
         ylims!(ax, (-2.5, 2.5))
-        xlims!(ax, (0, 4))
+        xlims!(ax, (-4, 4))
 
         j == 2 && hideydecorations!(ax, ticks = false, grid = false)
         i == 1 && hidexdecorations!(ax, ticks = false, grid = false)
@@ -69,7 +69,7 @@ save("plots/figures/conductance_nh_even.pdf", fig)
 fig
 
 ##
-fig = fig_conductance("nh_odd"; trans_coef = 1000, maxG = .01)
+fig = fig_conductance("nh_odd"; trans_coef = 1e4, maxG = .01)
 save("plots/figures/conductance_nh_odd.pdf", fig)
 fig
 
