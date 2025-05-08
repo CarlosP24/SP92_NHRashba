@@ -79,7 +79,7 @@ end
 kchain = Kitaev_Params(; N = 25, Δ = 2)
 h = build_Kitaev(kchain)
 
-µrng = subdiv(0, 4, 201)
+µrng = subdiv(0, 4, 501)
 
 Es = get_spectrum(µ -> h(µ = µ)[()], µrng; nev = 20)
 Es_nh = get_spectrum(µ -> h(µ = µ, Γ = 1)[()], µrng; nev = 20)
@@ -92,10 +92,10 @@ hlead, τ = build_lead(Lead_Params(;))
 glead = hlead |> greenfunction(GS.Schur(boundary = 0))
 g = h |> attach(glead, @hopping((; τ = τ)-> τ * τz), region = r -> r[1] == 0) |> attach(glead, @hopping((; τ = τ)-> τ * τz), region = r -> r[1] == (kchain.N-1)) |> greenfunction()
 
-GLL = conductance(g[1, 1])
-GRR = conductance(g[2, 2])
-GLR = conductance(g[1, 2])
-GRL = conductance(g[2, 1])
+GLL = conductance(g[1, 1]; nambu = true)
+GRR = conductance(g[2, 2]; nambu = true)
+GLR = conductance(g[1, 2]; nambu = true)
+GRL = conductance(g[2, 1]; nambu = true)
 
 function get_conductance(Gfunc, ωrng, µrng)
     pts = Iterators.product(µrng, ωrng)
@@ -104,7 +104,7 @@ function get_conductance(Gfunc, ωrng, µrng)
     end
     return Gs
 end
-ωrng = subdiv(-1, 1, 201) .+ 1e-3im
+ωrng = subdiv(-5, 5, 501) .+ 1e-3im
 GLLs = get_conductance((ω, µ) -> GLL(ω; µ), ωrng, µrng)
 GRRs = get_conductance((ω, µ) -> GRR(ω; µ), ωrng, µrng)
 GRLs = get_conductance((ω, µ) -> GRL(ω; µ), ωrng, µrng)
@@ -145,40 +145,84 @@ vlines!(ax, 1; color = :darkgreen, linestyle = :dash)
 hidexdecorations!(ax, ticks = false, grid = false)
 ax = plot_state(fig[1, 2], µrng, ψup, ψdown)
 xlims!(ax, (1, 25))
+
 hidexdecorations!(ax, ticks = false, grid = false)
 
 ax = plot_spectrum(fig[2, 1], µrng, Es_nh)
 vlines!(ax, 1; color = :darkgreen, linestyle = :dash)
+ylims!(ax, (-3, 3) )
 
 ax = plot_state(fig[2, 2], µrng, ψup_nh[:, 1], ψdown_nh[:, 1])
 xlims!(ax, (1, 25))
+
+Label(fig[1, 1, Top()], L"$\Gamma = 0$", fontsize = 15, padding = (150, 0, -150, 0))
+Label(fig[2, 1, Top()], L"$\Gamma = 1$", fontsize = 15, padding = (150, 0, -120, 0))
+Label(fig[1, 2, Top()], L"$\Gamma = 0$", fontsize = 15, padding = (0, 0, -70, 0))
+Label(fig[2, 2, Top()], L"$\Gamma = 1$", fontsize = 15, padding = (0, 0, -70, 0))
+
+#save("plots/figures/spectra.pdf", fig)
 fig
+
 ##
 function plot_conductance(pos, Gs, ωrng, μrng; colorrange = (-.1, .1))
     ax = Axis(pos; xlabel = L"\mu / t", ylabel = L"\omega / t")
-   hmap = heatmap!(ax, μrng, real.(ωrng), Gs; colormap = :balance, colorrange)
+    hmap = heatmap!(ax, μrng, real.(ωrng), Gs; colormap = :balance, colorrange)
+    #vlines!(ax, 1; color = :darkgreen, linestyle = :dash)
     return ax, hmap
 end
 
-fig = Figure()
-ax, hmap = plot_conductance(fig[1, 1], GLLs, ωrng, µrng)
-hidexdecorations!(ax, ticks = false, grid = false)
-ax, hmap = plot_conductance(fig[1, 2], GLRs, ωrng, µrng)
-hidexdecorations!(ax, ticks = false, grid = false)
-hideydecorations!(ax, ticks = false, grid = false)
-ax, hmap = plot_conductance(fig[2, 1], GRLs, ωrng, µrng)
-ax, hmap = plot_conductance(fig[2, 2], GRRs, ωrng, µrng)
-hideydecorations!(ax, ticks = false, grid = false)
+function plot_over_spectrum(ax, µrng, Es)
+    for E in eachrow(Es)
+        scatter!(ax, µrng[1:5:end], real.(E[1:5:end]); color = (:white, 0.5), markersize = 5)
+    end
+end
+
+function fig_conductance(Gs, ωrng, μrng, Es; colorrange = (-.1, .1), cross_coef = 100)
+    GLLs, GLRs, GRLs, GRRs = Gs
+    fig = Figure()
+    ax, hmap = plot_conductance(fig[1, 1], GLLs, ωrng, µrng; colorrange)
+    #plot_over_spectrum(ax, µrng, Es)
+    ylims!(ax, (ωrng |> first |> real, ωrng |> last |> real))
+    hidexdecorations!(ax, ticks = false, grid = false)
+    ax, hmap = plot_conductance(fig[1, 2], GLRs, ωrng, µrng; colorrange = colorrange ./ cross_coef)
+    plot_over_spectrum(ax, µrng, Es)
+    ylims!(ax, (ωrng |> first |> real, ωrng |> last |> real))
+    hidexdecorations!(ax, ticks = false, grid = false)
+    hideydecorations!(ax, ticks = false, grid = false)
+    ax, hmap = plot_conductance(fig[2, 1], GRLs, ωrng, µrng; colorrange = colorrange ./ cross_coef)
+    plot_over_spectrum(ax, µrng, Es)
+    ylims!(ax, (ωrng |> first |> real, ωrng |> last |> real))
+    ax, hmap = plot_conductance(fig[2, 2], GRRs, ωrng, µrng; colorrange)
+    plot_over_spectrum(ax, µrng, Es)
+    ylims!(ax, (ωrng |> first |> real, ωrng |> last |> real))
+    hideydecorations!(ax, ticks = false, grid = false)
+
+    Colorbar(fig[1:2, 3], colormap = :balance, limits = (-1, 1), ticks = [-1, 1], label = L"$G/G_0$", labelpadding = -20)
+
+    Label(fig[1, 1, Top()], L"G_{LL}", fontsize = 16, padding = (190, 0, -60, 0))
+    Label(fig[1, 2, Top()], L"$%$(cross_coef) \cdot G_{LR}$", fontsize = 16, padding = (160, 0, -60, 0))
+    Label(fig[2, 1, Top()], L"$%$(cross_coef) \cdot G_{RL}$", fontsize = 16, padding = (160, 0, -60, 0))
+    Label(fig[2, 2, Top()], L"G_{RR}", fontsize = 16, padding = (190, 0, -60, 0))
+
+    rowgap!(fig.layout, 1, 5)
+    colgap!(fig.layout, 1, 5)
+    colgap!(fig.layout, 2, 5)
+    return fig
+end
+
+Gs = [GLLs, GLRs, GRLs, GRRs]
+maxG = vcat(Gs...) |> maximum 
+maxG *= 0.01
+fig = fig_conductance([GLLs, GLRs, GRLs, GRRs], ωrng, µrng, Es; colorrange = (-maxG, maxG))
+Label(fig[1, 1:3, Top()], L"$\Gamma = 0$", fontsize = 20)
+save("plots/figures/conductance_hermitian.pdf", fig)
 fig
 
 ##
-fig = Figure()
-ax, hmap = plot_conductance(fig[1, 1], GLLs_nh, ωrng, µrng)
-hidexdecorations!(ax, ticks = false, grid = false)
-ax, hmap = plot_conductance(fig[1, 2], GLRs_nh, ωrng, µrng)
-hidexdecorations!(ax, ticks = false, grid = false)
-hideydecorations!(ax, ticks = false, grid = false)
-ax, hmap = plot_conductance(fig[2, 1], GRLs_nh, ωrng, µrng)
-ax, hmap = plot_conductance(fig[2, 2], GRRs_nh, ωrng, µrng)
-hideydecorations!(ax, ticks = false, grid = false)
-fig
+Gs_nh = [GLLs_nh, GLRs_nh, GRLs_nh, GRRs_nh]
+maxG_nh = vcat(Gs_nh...) |> maximum
+maxG_nh *= 1e-7
+fig_nh = fig_conductance([GLLs_nh, GLRs_nh, GRLs_nh, GRRs_nh], ωrng, µrng, Es_nh; colorrange = (-maxG_nh, maxG_nh), cross_coef = 1)
+Label(fig_nh[1, 1:3, Top()], L"$\Gamma = 1$", fontsize = 20)
+save("plots/figures/conductance_nh.pdf", fig_nh)
+fig_nh
