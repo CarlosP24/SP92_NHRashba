@@ -4,7 +4,7 @@ function calc_conductance(name::String)
     if chain_params.N == 0
         throw(ArgumentError("chain_params.N cannot be 0"))
     end
-    @unpack ωrng, μrng, outdir = params
+    @unpack ωrng, outdir, x = params
 
     a0 = 1
 
@@ -24,7 +24,16 @@ function calc_conductance(name::String)
 
     Gs = map(gpts) do (i, j)
         G = conductance(g[i, j]; nambu = true)
-        return pfunction((ω, μ) -> G(ω; μ), [ωrng, μrng])
+        if x == :µ
+            Gf = (ω, μ) -> G(ω; μ)
+            xrng = params.µrng
+        elseif x == :Vz
+            Gf = (ω, Vz) -> G(ω; Vz)
+            xrng = params.Vzrng
+        else
+            throw(ArgumentError("x must be :µ or :Vz"))
+        end
+        return pfunction(Gf, [ωrng, xrng])
     end
 
     Gs = reshape(Gs, 2, 2)

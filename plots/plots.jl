@@ -2,11 +2,12 @@ using Pkg
 Pkg.activate("plots")
 Pkg.instantiate()
 using CairoMakie, JLD2, Parameters
-
+include("../src/builders/Kitaev.jl")
+include("../src/builders/Wire.jl")
 ## Conductance figures
 
-function plot_conductance(pos, Gs, ωrng, μrng; colorrange = (-.1, .1))
-    ax = Axis(pos; xlabel = L"\mu / t", ylabel = L"\omega / t")
+function plot_conductance(pos, Gs, ωrng, μrng; colorrange = (-.1, .1), labels = labels["Kitaev"])
+    ax = Axis(pos; xlabel = labels.xlabel, ylabel = labels.ylabel)
     hmap = heatmap!(ax, μrng, real.(ωrng), Gs; colormap = :balance, colorrange)
     #vlines!(ax, 1; color = :darkgreen, linestyle = :dash)
     return ax, hmap
@@ -25,13 +26,23 @@ contact_dict = Dict(
     2 => "L",
 )
 
-function fig_conductance(name::String; maxG = 0.05, trans_coef = 0.01, ωlims = (-2.5, 2.5))
+labels = Dict(
+    "Kitaev" => (; xlabel = L"\mu / t", ylabel = L"\omega / t", barlabel = L"$G$ ($e^2/h$)"),
+    "Wire" => (; xlabel = L"$\mu$ (meV)", ylabel = L"$\omega$ (meV)", barlabel = L"$G$ ($e^2/h$)"),
+)
+
+function fig_conductance(name::String; maxG = 0.05, trans_coef = 0.01, ωlims = (-2.5, 2.5), imag = true)
     res = load("data/Conductance/$(name).jld2")["res"]
     eres = load("data/Spectrum/$(name).jld2")["res"]
     @unpack Es = eres
     @unpack system, Gs, path = res
     @unpack params = system
     @unpack ωrng, µrng = params
+
+    labs = labels
+    if system.chain_params isa Wire_Params
+        labs = labels["Wire"]
+    end
 
     fig = Figure()
     
@@ -40,11 +51,11 @@ function fig_conductance(name::String; maxG = 0.05, trans_coef = 0.01, ωlims = 
         if i != j
             lim = trans_coef * maxG
         end
-        ax, hmap = plot_conductance(fig[i, j], Gs[i, j]', ωrng, μrng; colorrange = (-lim, lim))
-        i == j && plot_over_spectrum(ax, eres.system.params.μrng, Es)
+        ax, hmap = plot_conductance(fig[i, j], Gs[i, j]', ωrng, μrng; colorrange = (-lim, lim), labels = labs)
+        i == j && imag && plot_over_spectrum(ax, eres.system.params.μrng, Es)
         #vlines!(ax, 1; color = :darkgreen, linestyle = :dash)
         ylims!(ax, ωlims)
-        xlims!(ax, (-4, 4))
+        xlims!(ax, (first(µrng), last(µrng)))
 
         j == 2 && hideydecorations!(ax, ticks = false, grid = false)
         i == 1 && hidexdecorations!(ax, ticks = false, grid = false)
@@ -52,7 +63,7 @@ function fig_conductance(name::String; maxG = 0.05, trans_coef = 0.01, ωlims = 
         Label(fig[i, j, Top()], L"$G_{%$(contact_dict[i]) %$(contact_dict[j])}$", fontsize = 15, padding = (180, 0, -140, 0))
 
     end
-    Colorbar(fig[1:2, 3], colormap = :balance, limits = (-maxG, maxG), ticks = [-maxG, maxG], label = L"G", labelpadding = -25)
+    Colorbar(fig[1:2, 3], colormap = :balance, limits = (-maxG, maxG), ticks = [-maxG, maxG], label = labs.barlabel, labelpadding = -25)
     colgap!(fig.layout, 1, 5)
     colgap!(fig.layout, 2, 5)
     rowgap!(fig.layout, 1, 5)
@@ -90,5 +101,5 @@ save("plots/figures/conductance_nh_odd_superleft.pdf", fig)
 fig
 
 ##
-fig = fig_conductance("Wire_base"; maxG = 1e-3, ωlims = (-0.25, 0.25))
+fig = fig_conductance("Wire_base"; maxG = 1e-3, ωlims = (-0.25, 0.25), imag = false)
 fig

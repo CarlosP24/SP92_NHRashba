@@ -1,6 +1,8 @@
 @with_kw struct Params
     µrng = subdiv(-4, 4, 401)
+    Vzrng = subdiv(0, 4, 401)
     ωrng = subdiv(-5, 5, 401) .+ 1e-2im
+    x = :µ
     outdir = "data"
 end
 
@@ -48,7 +50,9 @@ systems["nh_odd_superleft"] = System(systems["hermitian_chain"];
 
 params_wire = Params(;
     ωrng = subdiv(-.25, .25, 401) .+ 1e-3im,
-    μrng = subdiv(0, 5, 401),  
+    μrng = subdiv(0, 5, 401), 
+    Vzrng = subdiv(0, 5, 401), 
+    x = :Vz
 )
 
 systems["Wire_base"] = System(
