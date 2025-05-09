@@ -65,3 +65,18 @@ systems["Wire_base"] = System(
     NH_params = wire_nh_lead_params(; γ0 = 0.0, γy = 0.0),
     params = params_wire,
 )
+
+systems["Wire_nh_11"] = System(
+    systems["Wire_base"];
+    NH_params = wire_nh_lead_params(; γ0 = 1.0, γy = 1.0),
+)
+
+systems["Wire_nh_01"] = System(
+    systems["Wire_base"];
+    NH_params = wire_nh_lead_params(; γ0 = 0.0, γy = 1.0),
+)
+
+systems["Wire_nh_10"] = System(
+    systems["Wire_base"];
+    NH_params = wire_nh_lead_params(; γ0 = 1.0, γy = 0.0),
+)

@@ -13,11 +13,11 @@ function plot_conductance(pos, Gs, ωrng, μrng; colorrange = (-.1, .1), labels 
     return ax, hmap
 end
 
-function plot_over_spectrum(ax, µrng, Es)
+function plot_over_spectrum(ax, µrng, Es; imag = true)
     for E in eachrow(Es)
         #scatter!(ax, µrng[1:5:end], real.(E[1:5:end]); color = (:white, 0.5), markersize = 2)
         scatter!(ax, µrng, real.(E); color = (:green, 0.9), markersize = 1)
-        scatter!(ax, µrng, imag.(E); color = (:red, 0.5), markersize = 1)
+        imag && scatter!(ax, µrng, imag.(E); color = (:red, 0.5), markersize = 1)
     end
 end
 
@@ -31,6 +31,16 @@ labels = Dict(
     "Wire_µ" => (; xlabel = L"$\mu$ (meV)", ylabel = L"$\omega$ (meV)", barlabel = L"$G$ ($e^2/h$)"),
     "Wire_Vz" => (; xlabel = L"$V_z$ (meV)", ylabel = L"$\omega$ (meV)", barlabel = L"$G$ ($e^2/h$)"),
 )
+
+function niceticklabel(num)
+    anum = abs(num)
+    if anum >= 0.01
+        return L"%$(num)"
+    end
+    exp = round(Int, log10(anum))
+    coef = ceil(Int, anum * 10^float(exp))
+    return L"%$(sign(num) * coef |> Int) \cdot 10^{%$(exp)}"
+end
 
 function fig_conductance(name::String; maxG = 0.05, trans_coef = 0.01, ωlims = (-2.5, 2.5), imag = true)
     res = load("data/Conductance/$(name).jld2")["res"]
@@ -65,7 +75,7 @@ function fig_conductance(name::String; maxG = 0.05, trans_coef = 0.01, ωlims = 
             lim = trans_coef * maxG
         end
         ax, hmap = plot_conductance(fig[i, j], Gs[i, j]', ωrng, xrng; colorrange = (-lim, lim), labels = labs)
-        i == j && imag && plot_over_spectrum(ax, xrng, Es)
+        i == j && plot_over_spectrum(ax, xrng, Es; imag)
         #vlines!(ax, 1; color = :darkgreen, linestyle = :dash)
         ylims!(ax, (first(ωrng) |> real, last(ωrng) |> real))
         xlims!(ax, (first(xrng), last(xrng)))
@@ -76,7 +86,7 @@ function fig_conductance(name::String; maxG = 0.05, trans_coef = 0.01, ωlims = 
         Label(fig[i, j, Top()], L"$G_{%$(contact_dict[i]) %$(contact_dict[j])}$", fontsize = 15, padding = (180, 0, -140, 0))
 
     end
-    Colorbar(fig[1:2, 3], colormap = :balance, limits = (-maxG, maxG), ticks = [-maxG, maxG], label = labs.barlabel, labelpadding = -25)
+    Colorbar(fig[1:2, 3], colormap = :balance, limits = (-maxG, maxG), ticks =( [-maxG, maxG], niceticklabel.([-maxG, maxG])), label = labs.barlabel, labelpadding = -25)
     colgap!(fig.layout, 1, 5)
     colgap!(fig.layout, 2, 5)
     rowgap!(fig.layout, 1, 5)
@@ -114,5 +124,5 @@ save("plots/figures/conductance_nh_odd_superleft.pdf", fig)
 fig
 
 ##
-fig = fig_conductance("Wire_base"; maxG = 1e-4, ωlims = (-0.25, 0.25), imag = true)
+fig = fig_conductance("Wire_base"; maxG = 1e-4, ωlims = (-0.25, 0.25), imag = false, trans_coef = 1e-4 )
 fig
