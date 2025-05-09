@@ -25,7 +25,7 @@ contact_dict = Dict(
     2 => "L",
 )
 
-function fig_conductance(name::String; maxG = 0.05, trans_coef = 0.01)
+function fig_conductance(name::String; maxG = 0.05, trans_coef = 0.01, ωlims = (-2.5, 2.5))
     res = load("data/Conductance/$(name).jld2")["res"]
     eres = load("data/Spectrum/$(name).jld2")["res"]
     @unpack Es = eres
@@ -43,7 +43,7 @@ function fig_conductance(name::String; maxG = 0.05, trans_coef = 0.01)
         ax, hmap = plot_conductance(fig[i, j], Gs[i, j]', ωrng, μrng; colorrange = (-lim, lim))
         i == j && plot_over_spectrum(ax, eres.system.params.μrng, Es)
         #vlines!(ax, 1; color = :darkgreen, linestyle = :dash)
-        ylims!(ax, (-2.5, 2.5))
+        ylims!(ax, ωlims)
         xlims!(ax, (-4, 4))
 
         j == 2 && hideydecorations!(ax, ticks = false, grid = false)
@@ -90,5 +90,5 @@ save("plots/figures/conductance_nh_odd_superleft.pdf", fig)
 fig
 
 ##
-fig = fig_conductance("Wire_base"; maxG = 1e-3)
+fig = fig_conductance("Wire_base"; maxG = 1e-3, ωlims = (-0.25, 0.25))
 fig

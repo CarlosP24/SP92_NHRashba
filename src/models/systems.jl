@@ -46,7 +46,13 @@ systems["nh_odd_superleft"] = System(systems["hermitian_chain"];
     NH_params = NH_Lead_Params(; Γodd_left = 2, Γodd_right = 1, Γeven = 0.0),
 )
 
+params_wire = Params(;
+    ωrng = subdiv(-.25, .25, 401) .+ 1e-3im,
+    μrng = subdiv(0, 5, 401),  
+)
+
 systems["Wire_base"] = System(
     chain_params = Wire_Params(; L = 2000, Δ = 0.23),
     NH_params = wire_nh_lead_params(; γ0 = 0.0, γy = 0.0),
+    params = params_wire,
 )
