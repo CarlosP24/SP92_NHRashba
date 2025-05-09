@@ -13,11 +13,11 @@ function plot_conductance(pos, Gs, ωrng, μrng; colorrange = (-.1, .1), labels 
     return ax, hmap
 end
 
-function plot_over_spectrum(ax, µrng, Es; imag = true)
+function plot_over_spectrum(ax, µrng, Es; im = true)
     for E in eachrow(Es)
         #scatter!(ax, µrng[1:5:end], real.(E[1:5:end]); color = (:white, 0.5), markersize = 2)
         scatter!(ax, µrng, real.(E); color = (:green, 0.9), markersize = 1)
-        imag && scatter!(ax, µrng, imag.(E); color = (:red, 0.5), markersize = 1)
+        im && scatter!(ax, µrng, imag.(E); color = (:red, 0.5), markersize = 1)
     end
 end
 
@@ -42,7 +42,7 @@ function niceticklabel(num)
     return L"%$(sign(num) * coef |> Int) \cdot 10^{%$(exp)}"
 end
 
-function fig_conductance(name::String; maxG = 0.05, trans_coef = 0.01, ωlims = (-2.5, 2.5), imag = true)
+function fig_conductance(name::String; maxG = 0.05, trans_coef = 0.01, ωlims = (-2.5, 2.5), im = true)
     res = load("data/Conductance/$(name).jld2")["res"]
     eres = load("data/Spectrum/$(name).jld2")["res"]
     @unpack Es = eres
@@ -75,7 +75,7 @@ function fig_conductance(name::String; maxG = 0.05, trans_coef = 0.01, ωlims = 
             lim = trans_coef * maxG
         end
         ax, hmap = plot_conductance(fig[i, j], Gs[i, j]', ωrng, xrng; colorrange = (-lim, lim), labels = labs)
-        i == j && plot_over_spectrum(ax, xrng, Es; imag)
+        i == j && plot_over_spectrum(ax, xrng, Es; im)
         #vlines!(ax, 1; color = :darkgreen, linestyle = :dash)
         ylims!(ax, (first(ωrng) |> real, last(ωrng) |> real))
         xlims!(ax, (first(xrng), last(xrng)))
@@ -124,11 +124,11 @@ save("plots/figures/conductance_nh_odd_superleft.pdf", fig)
 fig
 
 ##
-fig = fig_conductance("Wire_base"; maxG = 1e-4, ωlims = (-0.25, 0.25), imag = false, trans_coef = 1e-4 )
+fig = fig_conductance("Wire_base"; maxG = 1e-4, ωlims = (-0.25, 0.25), im = false, trans_coef = 1e-4 )
 save("plots/figures/conductance_wire_base.pdf", fig)
 fig
 
 ##
-fig = fig_conductance("Wire_nh_11"; maxG = 1e-4, ωlims = (-0.25, 0.25), imag = true, trans_coef = 1e-4 )
+fig = fig_conductance("Wire_nh_01"; maxG = 1e-4, ωlims = (-0.25, 0.25), im = true, trans_coef = 1e-4 )
 save("plots/figures/conductance_wire_nh_11.pdf", fig)
 fig
