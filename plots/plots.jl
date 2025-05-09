@@ -129,16 +129,16 @@ save("plots/figures/conductance_wire_base.pdf", fig)
 fig
 
 ##
-fig = fig_conductance("Wire_nh_11"; maxG = 5e-4, ωlims = (-0.25, 0.25), im = false, trans_coef = 1e-6 )
-save("plots/figures/conductance_wire_nh_11.pdf", fig)
+fig = fig_conductance("Wire_nh_101"; maxG = 5e-4, ωlims = (-0.25, 0.25), im = false, trans_coef = 1e-6 )
+save("plots/figures/conductance_wire_nh_101.pdf", fig)
 fig
 
 ##
-fig = fig_conductance("Wire_nh_01"; maxG = 5e-4, ωlims = (-0.25, 0.25), im = false, trans_coef = 1e-4 )
-save("plots/figures/conductance_wire_nh_01.pdf", fig)
+fig = fig_conductance("Wire_nh_001"; maxG = 5e-4, ωlims = (-0.25, 0.25), im = false, trans_coef = 1e-4 )
+save("plots/figures/conductance_wire_nh_001.pdf", fig)
 fig
 
 ##
-fig = fig_conductance("Wire_nh_10"; maxG = 5e-4, ωlims = (-0.25, 0.25), im = false, trans_coef = 1e-8 )
-save("plots/figures/conductance_wire_nh_10.pdf", fig)
+fig = fig_conductance("Wire_nh_100"; maxG = 5e-4, ωlims = (-0.25, 0.25), im = false, trans_coef = 1e-8 )
+save("plots/figures/conductance_wire_nh_100.pdf", fig)
 fig
