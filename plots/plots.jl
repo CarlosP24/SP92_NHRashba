@@ -125,4 +125,10 @@ fig
 
 ##
 fig = fig_conductance("Wire_base"; maxG = 1e-4, ωlims = (-0.25, 0.25), imag = false, trans_coef = 1e-4 )
+save("plots/figures/conductance_wire_base.pdf", fig)
+fig
+
+##
+fig = fig_conductance("Wire_nh_11"; maxG = 1e-4, ωlims = (-0.25, 0.25), imag = true, trans_coef = 1e-4 )
+save("plots/figures/conductance_wire_nh_11.pdf", fig)
 fig
