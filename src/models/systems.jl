@@ -57,7 +57,7 @@ params_wire = Params(;
 
 systems["Wire_base"] = System(
     chain_params = Wire_Params(; 
-        L = 1200, 
+        L = 3000, 
         μ = 0.2,
         α = 40,
         Δ = 0.3

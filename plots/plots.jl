@@ -16,7 +16,7 @@ end
 function plot_over_spectrum(ax, µrng, Es)
     for E in eachrow(Es)
         #scatter!(ax, µrng[1:5:end], real.(E[1:5:end]); color = (:white, 0.5), markersize = 2)
-        scatter!(ax, µrng, real.(E); color = (:green, 0.5), markersize = 1)
+        scatter!(ax, µrng, real.(E); color = (:green, 0.9), markersize = 1)
         scatter!(ax, µrng, imag.(E); color = (:red, 0.5), markersize = 1)
     end
 end
@@ -67,7 +67,7 @@ function fig_conductance(name::String; maxG = 0.05, trans_coef = 0.01, ωlims = 
         ax, hmap = plot_conductance(fig[i, j], Gs[i, j]', ωrng, xrng; colorrange = (-lim, lim), labels = labs)
         i == j && imag && plot_over_spectrum(ax, xrng, Es)
         #vlines!(ax, 1; color = :darkgreen, linestyle = :dash)
-        ylims!(ax, ωlims)
+        ylims!(ax, (first(ωrng) |> real, last(ωrng) |> real))
         xlims!(ax, (first(xrng), last(xrng)))
 
         j == 2 && hideydecorations!(ax, ticks = false, grid = false)
@@ -114,5 +114,5 @@ save("plots/figures/conductance_nh_odd_superleft.pdf", fig)
 fig
 
 ##
-fig = fig_conductance("Wire_base"; maxG = 1e-4, ωlims = (-0.25, 0.25), imag = false)
+fig = fig_conductance("Wire_base"; maxG = 1e-4, ωlims = (-0.25, 0.25), imag = true)
 fig
