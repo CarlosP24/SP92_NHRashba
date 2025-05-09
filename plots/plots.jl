@@ -1,7 +1,7 @@
 using Pkg
 Pkg.activate("plots")
 Pkg.instantiate()
-using CairoMakie, JLD2, Parameters
+using CairoMakie, JLD2, Parameters, Quantica
 include("../src/builders/Kitaev.jl")
 include("../src/builders/Wire.jl")
 ## Conductance figures
@@ -28,7 +28,8 @@ contact_dict = Dict(
 
 labels = Dict(
     "Kitaev" => (; xlabel = L"\mu / t", ylabel = L"\omega / t", barlabel = L"$G$ ($e^2/h$)"),
-    "Wire" => (; xlabel = L"$\mu$ (meV)", ylabel = L"$\omega$ (meV)", barlabel = L"$G$ ($e^2/h$)"),
+    "Wire_µ" => (; xlabel = L"$\mu$ (meV)", ylabel = L"$\omega$ (meV)", barlabel = L"$G$ ($e^2/h$)"),
+    "Wire_Vz" => (; xlabel = L"$V_z$ (meV)", ylabel = L"$\omega$ (meV)", barlabel = L"$G$ ($e^2/h$)"),
 )
 
 function fig_conductance(name::String; maxG = 0.05, trans_coef = 0.01, ωlims = (-2.5, 2.5), imag = true)
@@ -37,11 +38,23 @@ function fig_conductance(name::String; maxG = 0.05, trans_coef = 0.01, ωlims = 
     @unpack Es = eres
     @unpack system, Gs, path = res
     @unpack params = system
-    @unpack ωrng, µrng = params
+    @unpack ωrng, x = params
+
+    if x == :µ
+        xrng = params.µrng
+    elseif x == :Vz
+        xrng = params.Vzrng
+    else
+        throw(ArgumentError("x must be :µ or :Vz"))
+    end
 
     labs = labels
     if system.chain_params isa Wire_Params
-        labs = labels["Wire"]
+        if x == :Vz
+            labs = labels["Wire_Vz"]
+        else
+            labs = labels["Wire_µ"]
+        end
     end
 
     fig = Figure()
@@ -51,11 +64,11 @@ function fig_conductance(name::String; maxG = 0.05, trans_coef = 0.01, ωlims = 
         if i != j
             lim = trans_coef * maxG
         end
-        ax, hmap = plot_conductance(fig[i, j], Gs[i, j]', ωrng, μrng; colorrange = (-lim, lim), labels = labs)
-        i == j && imag && plot_over_spectrum(ax, eres.system.params.μrng, Es)
+        ax, hmap = plot_conductance(fig[i, j], Gs[i, j]', ωrng, xrng; colorrange = (-lim, lim), labels = labs)
+        i == j && imag && plot_over_spectrum(ax, xrng, Es)
         #vlines!(ax, 1; color = :darkgreen, linestyle = :dash)
         ylims!(ax, ωlims)
-        xlims!(ax, (first(µrng), last(µrng)))
+        xlims!(ax, (first(xrng), last(xrng)))
 
         j == 2 && hideydecorations!(ax, ticks = false, grid = false)
         i == 1 && hidexdecorations!(ax, ticks = false, grid = false)
@@ -101,5 +114,5 @@ save("plots/figures/conductance_nh_odd_superleft.pdf", fig)
 fig
 
 ##
-fig = fig_conductance("Wire_base"; maxG = 1e-3, ωlims = (-0.25, 0.25), imag = false)
+fig = fig_conductance("Wire_base"; maxG = 1e-4, ωlims = (-0.25, 0.25), imag = false)
 fig

@@ -49,14 +49,19 @@ systems["nh_odd_superleft"] = System(systems["hermitian_chain"];
 )
 
 params_wire = Params(;
-    ωrng = subdiv(-.25, .25, 401) .+ 1e-3im,
+    ωrng = subdiv(-.45, .45, 401) .+ 1e-3im,
     μrng = subdiv(0, 5, 401), 
-    Vzrng = subdiv(0, 5, 401), 
+    Vzrng = subdiv(0, 2.6, 401), 
     x = :Vz
 )
 
 systems["Wire_base"] = System(
-    chain_params = Wire_Params(; L = 2000, Δ = 0.23),
+    chain_params = Wire_Params(; 
+        L = 1200, 
+        μ = 0.2,
+        α = 40,
+        Δ = 0.3
+        ),
     NH_params = wire_nh_lead_params(; γ0 = 0.0, γy = 0.0),
     params = params_wire,
 )
