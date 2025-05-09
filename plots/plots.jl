@@ -142,3 +142,8 @@ fig
 fig = fig_conductance("Wire_nh_100"; maxG = 5e-4, ωlims = (-0.25, 0.25), im = false, trans_coef = 1e-8 )
 save("plots/figures/conductance_wire_nh_100.pdf", fig)
 fig
+
+##
+fig = fig_conductance("Wire_nh_110"; maxG = 5e-4, ωlims = (-0.25, 0.25), im = false, trans_coef = 1e-8 )
+save("plots/figures/conductance_wire_nh_110.pdf", fig)
+fig
