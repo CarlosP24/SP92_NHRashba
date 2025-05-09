@@ -41,14 +41,15 @@ end
 
 @with_kw struct wire_nh_lead_params
     γ0::Float64 = 0.0
+    γx::Float64 = 0.0
     γy::Float64 = 0.0
 end
 
 add_NH_lead!(params::wire_nh_lead_params) = h -> add_NH_lead!(h, params)
 function add_NH_lead!(h::Quantica.AbstractHamiltonian, params::wire_nh_lead_params)
-    @unpack γ0, γy = params
+    @unpack γ0, γx, γy = params
 
-    nh_term = @onsite!((o, r; γ0 = γ0, γy = γy) -> o + 1im * (γ0 * σ0τ0 + γy * σyτ0); )
+    nh_term = @onsite!((o, r; γ0 = γ0, γy = γy) -> o + 1im * (γ0 * σ0τ0 + γy * σyτ0 + γx * σxτ0); )
 
     return h |> nh_term
 end
