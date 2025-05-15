@@ -3,6 +3,7 @@
     t::Float64 = 1.0
     Δ::Float64 = 1.0 
     N::Int = 25
+    nambu::Bool = true
 end
 
 build(params::Kitaev_Params) = build_Kitaev(params)

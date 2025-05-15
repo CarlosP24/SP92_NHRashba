@@ -13,6 +13,7 @@
     N = round(Int, L / a0)
     #B = 1
     Vz = 0.0
+    nambu::Bool = true
 end
 
 build(params::Wire_Params) = build_wire(params)

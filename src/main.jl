@@ -9,15 +9,16 @@ using JLD2
     σ0τ0 = σ(0, 0)
     σyτ0 = σ(0, 2)
     σxτ0 = σ(0, 1)
-    τz = σ(3)
-    τx = σ(1)
-    τy = σ(2)
-    τ0 = σ(0)
+    τz = σz = σ(3)
+    τx = σx = σ(1)
+    τy = σy = σ(2)
+    τ0 = σ0 = σ(0)
     using ProgressMeter, Parameters
     using LinearAlgebra, Arpack
 
     include("builders/Kitaev.jl")
     include("builders/Wire.jl")
+    include("builders/Filter.jl")
     include("builders/leads.jl")
 
     include("models/systems.jl")

@@ -1,7 +1,8 @@
 @with_kw struct Params
     µrng = subdiv(-4, 4, 401)
-    Vzrng = subdiv(0, 4, 401)
-    ωrng = subdiv(-5, 5, 401) .+ 1e-2im
+    Vzrng = subdiv(0, 4, 101)
+    θrng = subdiv(0, 2π, 101)
+    ωrng = subdiv(-5, 5, 101) .+ 1e-2im
     x = :µ
     outdir = "data"
 end
@@ -100,4 +101,21 @@ systems["Wire_nh_001_strong"] = System(
 systems["Wire_nh_101_strong"] = System(
     systems["Wire_base"];
     NH_params = wire_nh_lead_params(; γ0 = 0.5, γy = 0.5),
+)
+
+systems["Filter_base"] = System(;
+    chain_params = Filter_Params(; 
+        L = 100, 
+        α = 10.0,
+        μ = 0.0,
+    ),
+    NH_params = Filter_NH_Params(;),
+    params = Params(;
+        ωrng = subdiv(-.45, .45, 401) .+ 1e-3im,
+        μrng = subdiv(-4, 4, 401), 
+        Vzrng = subdiv(0, 5, 401), 
+        θrng = subdiv(0, 2π, 401),
+        x = (:Vz, :θ),
+    ),
+    lead_params = Lead_Params(; nambu = false)
 )

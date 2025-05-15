@@ -76,6 +76,7 @@ function fig_conductance(name::String; maxG = 0.05, trans_coef = 0.01, ωlims = 
         end
         ax, hmap = plot_conductance(fig[i, j], Gs[i, j]', ωrng, xrng; colorrange = (-lim, lim), labels = labs)
         i == j && plot_over_spectrum(ax, xrng, Es; im)
+        vlines!(ax, 0.5; color = :black, linestyle = :dash)
         #vlines!(ax, 1; color = :darkgreen, linestyle = :dash)
         ylims!(ax, (first(ωrng) |> real, last(ωrng) |> real))
         xlims!(ax, (first(xrng), last(xrng)))
@@ -151,4 +152,14 @@ fig
 ##
 fig = fig_conductance("Wire_nh_010"; maxG = 5e-4, ωlims = (-0.25, 0.25), im = true, trans_coef = 1e-4 )
 save("plots/figures/conductance_wire_nh_010.pdf", fig)
+fig
+
+##
+fig = fig_conductance("Wire_nh_001_strong"; maxG = 5e-4, ωlims = (-0.25, 0.25), im = true, trans_coef = 1e-4 )
+save("plots/figures/conductance_wire_nh_001.pdf", fig)
+fig
+
+##
+fig = fig_conductance("Wire_nh_101_strong"; maxG = 5e-4, ωlims = (-0.25, 0.25), im = true, trans_coef = 1e-8 )
+save("plots/figures/conductance_wire_nh_101.pdf", fig)
 fig
