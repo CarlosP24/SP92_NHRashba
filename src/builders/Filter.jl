@@ -31,42 +31,38 @@ function build_filter(params::Filter_Params)
 end
 
 @with_kw struct Filter_NH_Params
-    γ0s::Vector{Float64} = [0.0]
-    γys::Vector{Float64} = [0.0]
+    γdict::Dict{Int, Vector{Float64}} = Dict(1 => [0.0, 0.0])
+    
 end
 
 function build_NH_params(hparams::Filter_Params, γs::Dict{Int, Vector{Float64}})
     @unpack N = hparams
-    γ0s = zeros(Float64, N)
-    γys = zeros(Float64, N)
-    for (i, γs) in γs
-        γ0s[i] = γs[1]
-        γys[i] = γs[2]
+    γdict = Dict(n => [0.0, 0.0] for n in 1:N)
+    for (n, γ) in γs
+        if n > N
+            throw(ArgumentError("Key $n in γs is greater than the number of sites $N."))
+        end
+        γdict[n] = γ
     end
-    return Filter_NH_Params(γ0s, γys)
+    return Filter_NH_Params(; γdict)
 end
 
 add_NH_lead!(params::Filter_NH_Params) = h -> add_NH_lead!(h, params)
 function add_NH_lead!(h::Quantica.AbstractHamiltonian, params::Filter_NH_Params)
-    @unpack γ0s, γys = params
-    if γ0s == [0.0] && γys == [0.0]
+    @unpack γdict = params
+    
+    sγ = γdict |> values |> sum
+    if sγ == zeros(length(sγ))
         return h
     end
     sites = getindex.(h.hparent.lattice.unitcell.sites, 1)
+    a0 = sites[2] - sites[1]
 
-    if length(γ0s) != length(sites)
-        throw(ArgumentError("Length of γ0s must match the number of sites in the chain."))
-    end
-    if length(γys) != length(sites)
-        throw(ArgumentError("Length of γys must match the number of sites in the chain."))
+    if length(γdict) != length(sites)
+        throw(ArgumentError("Length of γs must match the number of sites in the chain."))
     end
 
-    for (γ0, γy, site) in zip(γ0s, γys, sites)
-        if γ0 == 0 && γy == 0
-            continue
-        end
-        nh_term = @onsite!((o, r;) -> o - 1im * (γ0 * σ0 + γy * σy); region = r -> r[1] == site)
-        h = h |> nh_term
-    end
-    return h
+    sindex(r) = round(Int, r[1] / a0 + 1)
+    nh_term = @onsite!((o, r;) -> o - 1im * (γdict[sindex(r)][1] * σ0 + γdict[sindex(r)][2] * σy); region = r -> (r[1] >= sites[1]) && (r[1] < sites[end]))
+    return h |> nh_term
 end
