@@ -4,13 +4,26 @@ Pkg.instantiate()
 using CairoMakie, JLD2, Parameters, Quantica
 include("../src/builders/Kitaev.jl")
 include("../src/builders/Wire.jl")
+include("../src/builders/Filter.jl")
 ## Conductance figures
+labels = Dict(
+    "Kitaev" => (; xlabel = L"\mu / t", ylabel = L"\omega / t", barlabel = L"$G$ ($e^2/h$)"),
+    "Wire_µ" => (; xlabel = L"$\mu$ (meV)", ylabel = L"$\omega$ (meV)", barlabel = L"$G$ ($e^2/h$)"),
+    "Wire_Vz" => (; xlabel = L"$V_z$ (meV)", ylabel = L"$\omega$ (meV)", barlabel = L"$G$ ($e^2/h$)"),
+    "Filter" => (; xlabel = L"$V_z$ (meV)", ylabel = L"$\omega$ (meV)", barlabel = L"$G$ ($e^2/h$)"),
+)
 
 function plot_conductance(pos, Gs, ωrng, μrng; colorrange = (-.1, .1), labels = labels["Kitaev"])
     ax = Axis(pos; xlabel = labels.xlabel, ylabel = labels.ylabel)
-    hmap = heatmap!(ax, μrng, real.(ωrng), Gs; colormap = :balance, colorrange)
+    hmap = heatmap!(ax, μrng, real.(ωrng), Gs'; colormap = :balance, colorrange)
     #vlines!(ax, 1; color = :darkgreen, linestyle = :dash)
     return ax, hmap
+end
+
+function plot_conductance(pos, Gs, ωrng, xrng, yrng, y; colorrange = (-.1, .1), labels = labels["Filter"])
+    iy = findmin(x -> abs(x - y), yrng)[2]
+    Gs = Gs[:, :, iy]
+    return plot_conductance(pos, Gs, ωrng, xrng; colorrange = colorrange, labels = labels)
 end
 
 function plot_over_spectrum(ax, µrng, Es; im = true)
@@ -21,16 +34,20 @@ function plot_over_spectrum(ax, µrng, Es; im = true)
     end
 end
 
+function plot_over_spectrum(ax, xrng, yrng, y, Es; im = true)
+    iy = findmin(x -> abs(x - y), yrng)[2]
+    Es = Es[:, iy]
+    Es = hcat(Es...)
+    sort!(Es, dims = 1, by = x -> abs(real(x)))
+    plot_over_spectrum(ax, xrng, Es; im)
+end
+
 contact_dict = Dict(
     1 => "R",
     2 => "L",
 )
 
-labels = Dict(
-    "Kitaev" => (; xlabel = L"\mu / t", ylabel = L"\omega / t", barlabel = L"$G$ ($e^2/h$)"),
-    "Wire_µ" => (; xlabel = L"$\mu$ (meV)", ylabel = L"$\omega$ (meV)", barlabel = L"$G$ ($e^2/h$)"),
-    "Wire_Vz" => (; xlabel = L"$V_z$ (meV)", ylabel = L"$\omega$ (meV)", barlabel = L"$G$ ($e^2/h$)"),
-)
+
 
 function niceticklabel(num)
     anum = abs(num)
@@ -42,29 +59,43 @@ function niceticklabel(num)
     return L"%$(sign(num) * coef |> Int) \cdot 10^{%$(exp)}"
 end
 
-function fig_conductance(name::String; maxG = 0.05, trans_coef = 0.01, ωlims = (-2.5, 2.5), im = true)
+function fig_conductance(name::String; y = 0.0, maxG = 0.05, trans_coef = 0.01, ωlims = (-2.5, 2.5), im = true)
     res = load("data/Conductance/$(name).jld2")["res"]
     eres = load("data/Spectrum/$(name).jld2")["res"]
     @unpack Es = eres
     @unpack system, Gs, path = res
     @unpack params = system
     @unpack ωrng, x = params
-
+    
+    plot_c(pos, Gs, ωrng, xrng, yrng, y; kws...) = plot_conductance(pos, Gs, ωrng, xrng; kws...)
+    plot_o(ax, xrng, yrng, y, Es; kws...) = plot_over_spectrum(ax, xrng, Es; kws...)
+    yrng = nothing
     if x == :µ
         xrng = params.µrng
     elseif x == :Vz
         xrng = params.Vzrng
+    elseif x == :θ
+        xrng = params.θrng
+    elseif x == (:Vz, :θ)
+        xrng = params.Vzrng
+        yrng = params.θrng
+        plot_c = (pos, Gs, ωrng, xrng, yrng, y; kws...)  -> plot_conductance(pos, Gs, ωrng, xrng, yrng, y; kws...)
+        plot_o = (ax, xrng, yrng, y, Es; kws...) -> plot_over_spectrum(ax, xrng, yrng, y, Es; kws...)
     else
         throw(ArgumentError("x must be :µ or :Vz"))
     end
 
-    labs = labels
+    labs = labels["Kitaev"]
     if system.chain_params isa Wire_Params
         if x == :Vz
             labs = labels["Wire_Vz"]
         else
             labs = labels["Wire_µ"]
         end
+    end
+
+    if system.chain_params isa Filter_Params
+        labs = labels["Filter"]
     end
 
     fig = Figure()
@@ -74,9 +105,9 @@ function fig_conductance(name::String; maxG = 0.05, trans_coef = 0.01, ωlims = 
         if i != j
             lim = trans_coef * maxG
         end
-        ax, hmap = plot_conductance(fig[i, j], Gs[i, j]', ωrng, xrng; colorrange = (-lim, lim), labels = labs)
-        i == j && plot_over_spectrum(ax, xrng, Es; im)
-        vlines!(ax, 0.5; color = :black, linestyle = :dash)
+        ax, hmap = plot_c(fig[i, j], Gs[i, j], ωrng, xrng, yrng, y; colorrange = (-lim, lim), labels = labs)
+        i == j && plot_o(ax, xrng, yrng, y, Es; im)
+        #vlines!(ax, 0.5; color = :black, linestyle = :dash)
         #vlines!(ax, 1; color = :darkgreen, linestyle = :dash)
         ylims!(ax, (first(ωrng) |> real, last(ωrng) |> real))
         xlims!(ax, (first(xrng), last(xrng)))
@@ -88,6 +119,8 @@ function fig_conductance(name::String; maxG = 0.05, trans_coef = 0.01, ωlims = 
 
     end
     Colorbar(fig[1:2, 3], colormap = :balance, limits = (-maxG, maxG), ticks =( [-maxG, maxG], niceticklabel.([-maxG, maxG])), label = labs.barlabel, labelpadding = -25)
+    
+    system.chain_params isa Filter_Params && Label(fig[1, 1:2, Top()], L"$\theta = %$(round(Int, y/π))\pi$")
     colgap!(fig.layout, 1, 5)
     colgap!(fig.layout, 2, 5)
     rowgap!(fig.layout, 1, 5)
@@ -162,4 +195,13 @@ fig
 ##
 fig = fig_conductance("Wire_nh_101_strong"; maxG = 5e-4, ωlims = (-0.25, 0.25), im = true, trans_coef = 1e-8 )
 save("plots/figures/conductance_wire_nh_101.pdf", fig)
+fig
+
+
+##
+fig = fig_conductance("Filter_base"; maxG = 1e-4, ωlims = (-0.45, 0.45), trans_coef = 1e-2)
+fig
+
+##
+fig = fig_conductance("Filter_nh_example"; maxG = 1e-4, ωlims = (-5, 5), trans_coef = 1e-5)
 fig

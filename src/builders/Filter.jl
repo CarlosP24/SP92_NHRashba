@@ -65,7 +65,7 @@ function add_NH_lead!(h::Quantica.AbstractHamiltonian, params::Filter_NH_Params)
         if γ0 == 0 && γy == 0
             continue
         end
-        nh_term = @onsite!((o, r;) -> o + 1im * (γ0 * σ0 + γy * σy); region = r -> r[1] == site)
+        nh_term = @onsite!((o, r;) -> o - 1im * (γ0 * σ0 + γy * σy); region = r -> r[1] == site)
         h = h |> nh_term
     end
     return h

@@ -112,16 +112,35 @@ systems["Wire_nh_101_strong"] = System(
 
 systems["Filter_base"] = System(;
     chain_params = Filter_Params(; 
-        L = 100, 
-        α = 10.0,
+        L = 1000, 
+        α = 5.0,
         μ = 0.0,
     ),
     NH_params = Filter_NH_Params(;),
     params = Params(;
-        ωrng = subdiv(-.45, .45, 101) .+ 1e-3im,
-        Vzrng = subdiv(0, 5, 101), 
-        θrng = subdiv(0, 2π, 101),
+        ωrng = subdiv(-5, 5, 401) .+ 1e-3im,
+        Vzrng = subdiv(0, 5, 401), 
+        θrng = [0],
         x = (:Vz, :θ),
     ),
-    lead_params = Lead_Params(; nambu = false)
+    lead_params = Lead_Params(; 
+        nambu = false,
+        t = 10)
+)
+
+systems["Filter_base_noSOC"] = System(
+    systems["Filter_base"];
+    chain_params = Filter_Params(systems["Filter_base"].chain_params; 
+        α = 0.0,
+    ),
+)
+
+systems["Filter_nh_example"] = System(
+    systems["Filter_base"];
+    NH_params = build_NH_params(
+        systems["Filter_base"].chain_params, 
+        Dict(
+            [i => [1.0, 1.0]
+            for i in 1:systems["Filter_base"].chain_params.N])
+    )
 )

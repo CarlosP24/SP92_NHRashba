@@ -31,7 +31,7 @@ function pspectrum(hfunc, xrng, yrng; nev = 20, ncv = nev, which = :LM, sigma = 
     end
     Es = pfunction(f, [xrng, yrng]; nev, ncv, which, sigma, check, tol, kw...)
     Es = reshape(Es, length(xrng), length(yrng))
-    Es = hcat(Es...)
-    sort!(Es, dims = 1, by = x -> abs(real(x)))
+    #Es = hcat(Es...)
+    #sort!(Es, dims = 1, by = x -> abs(real(x)))
     return Es
 end
