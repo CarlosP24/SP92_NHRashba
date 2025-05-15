@@ -199,9 +199,13 @@ fig
 
 
 ##
-fig = fig_conductance("Filter_base"; maxG = 1e-4, ωlims = (-0.45, 0.45), trans_coef = 1e-2)
+fig = fig_conductance("Filter_base"; maxG = 1e-5, trans_coef = 1e-4)
 fig
 
 ##
-fig = fig_conductance("Filter_nh_example"; maxG = 1e-4, ωlims = (-5, 5), trans_coef = 1e-5)
+fig = fig_conductance("Filter_base_noSOC"; maxG = 1e-5,trans_coef = 1e-4)
+fig
+
+##
+fig = fig_conductance("Filter_nh_example"; maxG = 1e-4, trans_coef = 1e-6)
 fig

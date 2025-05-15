@@ -140,7 +140,7 @@ systems["Filter_nh_example"] = System(
     NH_params = build_NH_params(
         systems["Filter_base"].chain_params, 
         Dict(
-            [i => [1.0, 1.0]
+            [i => [0.0, 1.0]
             for i in 1:systems["Filter_base"].chain_params.N])
     )
 )
