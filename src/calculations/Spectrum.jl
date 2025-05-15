@@ -14,11 +14,21 @@ function calc_spectrum(name::String)
     elseif x == :Vz
         hf = Vz -> h(Vz = Vz)[()]
         xrng = params.Vzrng
+    elseif x == :θ
+        hf = θ -> h(θ = θ)[()]
+        xrng = params.θrng
+    elseif x == (:Vz, :θ)
+        hf = (Vz, θ) -> h(Vz = Vz, θ = θ)[()]
+        xrng = (params.Vzrng, params.θrng)
     else
         throw(ArgumentError("x must be :µ or :Vz"))
     end
     
-    Es = pspectrum(hf, xrng; nev = 20)
+    if length(xrng) == 1
+        Es = pspectrum(hf, xrng; nev = 20)
+    else
+        Es = pspectrum(hf, xrng...; nev = 20)
+    end
 
     path = "$(outdir)/Spectrum/$(name).jld2"
     return Results(; system = system, Es = Es, path = path)

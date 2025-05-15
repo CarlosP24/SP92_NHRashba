@@ -1,8 +1,8 @@
 @with_kw struct Params
     µrng = subdiv(-4, 4, 401)
-    Vzrng = subdiv(0, 4, 101)
-    θrng = subdiv(0, 2π, 101)
-    ωrng = subdiv(-5, 5, 101) .+ 1e-2im
+    Vzrng = subdiv(0, 4, 401)
+    θrng = subdiv(0, 2π, 401)
+    ωrng = subdiv(-5, 5, 401) .+ 1e-2im
     x = :µ
     outdir = "data"
 end
@@ -21,6 +21,8 @@ end
     lead_params::Lead_Params = Lead_Params(; )
 end
 
+
+## KITAEV ###################
 systems = Dict(
     "hermitian_chain" => System(
         chain_params = Kitaev_Params(; N = 50, Δ = 2),
@@ -49,12 +51,15 @@ systems["nh_odd_superleft"] = System(systems["hermitian_chain"];
     NH_params = NH_Lead_Params(; Γodd_left = 2, Γodd_right = 1, Γeven = 0.0),
 )
 
+## WIRE ###################
+
 params_wire = Params(;
     ωrng = subdiv(-.45, .45, 401) .+ 1e-3im,
     μrng = subdiv(0, 5, 401), 
     Vzrng = subdiv(0, 2.6, 401), 
     x = :Vz
 )
+
 
 systems["Wire_base"] = System(
     chain_params = Wire_Params(; 
@@ -103,6 +108,8 @@ systems["Wire_nh_101_strong"] = System(
     NH_params = wire_nh_lead_params(; γ0 = 0.5, γy = 0.5),
 )
 
+## WIRE ##################
+
 systems["Filter_base"] = System(;
     chain_params = Filter_Params(; 
         L = 100, 
@@ -111,10 +118,9 @@ systems["Filter_base"] = System(;
     ),
     NH_params = Filter_NH_Params(;),
     params = Params(;
-        ωrng = subdiv(-.45, .45, 401) .+ 1e-3im,
-        μrng = subdiv(-4, 4, 401), 
-        Vzrng = subdiv(0, 5, 401), 
-        θrng = subdiv(0, 2π, 401),
+        ωrng = subdiv(-.45, .45, 101) .+ 1e-3im,
+        Vzrng = subdiv(0, 5, 101), 
+        θrng = subdiv(0, 2π, 101),
         x = (:Vz, :θ),
     ),
     lead_params = Lead_Params(; nambu = false)
