@@ -106,7 +106,7 @@ function fig_conductance(name::String; y = 0.0, maxG = 0.05, trans_coef = 0.01, 
             lim = trans_coef * maxG
         end
         ax, hmap = plot_c(fig[i, j], Gs[i, j], ωrng, xrng, yrng, y; colorrange = (-lim, lim), labels = labs)
-        i == j && plot_o(ax, xrng, yrng, y, Es; im)
+        #i == j && plot_o(ax, xrng, yrng, y, Es; im)
         #vlines!(ax, 0.5; color = :black, linestyle = :dash)
         #vlines!(ax, 1; color = :darkgreen, linestyle = :dash)
         ylims!(ax, (first(ωrng) |> real, last(ωrng) |> real))
@@ -207,5 +207,5 @@ fig = fig_conductance("Filter_base_noSOC"; maxG = 1e-5,trans_coef = 1e-4)
 fig
 
 ##
-fig = fig_conductance("Filter_nh_example"; maxG = 1e-4, trans_coef = 1e-6)
+fig = fig_conductance("Filter_nh_example"; maxG = 1e-6, trans_coef = 1e-3)
 fig

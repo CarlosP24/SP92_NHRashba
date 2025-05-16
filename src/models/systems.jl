@@ -5,6 +5,7 @@
     ωrng = subdiv(-5, 5, 401) .+ 1e-2im
     x = :µ
     outdir = "data"
+    nev = 20
 end
 
 @with_kw struct Results
@@ -113,15 +114,16 @@ systems["Wire_nh_101_strong"] = System(
 systems["Filter_base"] = System(;
     chain_params = Filter_Params(; 
         L = 1000, 
-        α = 5.0,
+        α = 10.0,
         μ = 0.0,
     ),
     NH_params = Filter_NH_Params(;),
     params = Params(;
         ωrng = subdiv(-5, 5, 401) .+ 1e-3im,
         Vzrng = subdiv(0, 5, 401), 
-        θrng = [0],
+        θrng = subdiv(0, π/2, 11),
         x = (:Vz, :θ),
+        nev = 50,
     ),
     lead_params = Lead_Params(; 
         nambu = false,
@@ -140,7 +142,93 @@ systems["Filter_nh_example"] = System(
     NH_params = build_NH_params(
         systems["Filter_base"].chain_params, 
         Dict(
-            [i => [0.1, 1.0]
+            [i => [0.0, 1.0]
             for i in 1:systems["Filter_base"].chain_params.N])
+    )
+)
+
+systems["Filter_nh_01"] = System(
+    systems["Filter_base"];
+    NH_params = build_NH_params(
+        systems["Filter_base"].chain_params, 
+        Dict(
+            [i => [0.0, 1.0]
+            for i in 1:systems["Filter_base"].chain_params.N])
+    )
+)
+
+systems["Filter_nh_11"] = System(
+    systems["Filter_base"];
+    NH_params = build_NH_params(
+        systems["Filter_base"].chain_params, 
+        Dict(
+            [i => [1.0, 1.0]
+            for i in 1:systems["Filter_base"].chain_params.N])
+    )
+)
+
+systems["Filter_nh_01_mid"] = System(
+    systems["Filter_base"];
+    NH_params = build_NH_params(
+        systems["Filter_base"].chain_params, 
+        Dict(
+            round(Int, systems["Filter_base"].chain_params.N/2) => [0.0, 1.0]
+        )
+    )
+)
+
+systems["Filter_nh_11_mid"] = System(
+    systems["Filter_base"];
+    NH_params = build_NH_params(
+        systems["Filter_base"].chain_params, 
+        Dict(
+            round(Int, systems["Filter_base"].chain_params.N/2) => [1.0, 1.0]
+        )
+    )
+)
+
+systems["Filter_short"] = System(systems["Filter_base"]; 
+    chain_params = Filter_Params(systems["Filter_base"].chain_params; 
+        L = 100, 
+    ),
+)
+
+systems["Filter_short_nh_01"] = System(
+    systems["Filter_short"];
+    NH_params = build_NH_params(
+        systems["Filter_short"].chain_params, 
+        Dict(
+            [i => [0.0, 1.0]
+            for i in 1:systems["Filter_short"].chain_params.N])
+    )
+)
+
+systems["Filter_short_nh_11"] = System(
+    systems["Filter_short"];
+    NH_params = build_NH_params(
+        systems["Filter_short"].chain_params, 
+        Dict(
+            [i => [1.0, 1.0]
+            for i in 1:systems["Filter_short"].chain_params.N])
+    )
+)
+
+systems["Filter_short_nh_01_mid"] = System(
+    systems["Filter_short"];
+    NH_params = build_NH_params(
+        systems["Filter_short"].chain_params, 
+        Dict(
+            round(Int, systems["Filter_short"].chain_params.N/2) => [0.0, 1.0]
+        )
+    )
+)
+
+systems["Filter_short_nh_11_mid"] = System(
+    systems["Filter_short"];
+    NH_params = build_NH_params(
+        systems["Filter_short"].chain_params, 
+        Dict(
+            round(Int, systems["Filter_short"].chain_params.N/2) => [1.0, 1.0]
+        )
     )
 )

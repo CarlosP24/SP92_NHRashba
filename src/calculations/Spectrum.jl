@@ -1,10 +1,10 @@
 function calc_spectrum(name::String)
     system = systems[name]
-    @unpack params, chain_params, NH_params = system
+    @unpack params, chain_params, NH_params= system
     if chain_params.N == 0
         throw(ArgumentError("chain_params.N cannot be 0"))
     end
-    @unpack x, outdir = params
+    @unpack x, outdir, nev  = params
 
     h = build(chain_params) |> add_NH_lead!(NH_params)
 
@@ -25,9 +25,9 @@ function calc_spectrum(name::String)
     end
     
     if length(xrng) == 1
-        Es = pspectrum(hf, xrng; nev = 20)
+        Es = pspectrum(hf, xrng; nev)
     else
-        Es = pspectrum(hf, xrng...; nev = 20)
+        Es = pspectrum(hf, xrng...; nev)
     end
 
     path = "$(outdir)/Spectrum/$(name).jld2"

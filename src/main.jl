@@ -47,6 +47,16 @@ elseif endswith(key, "_spec")
     save(res.path, "res", res)
     @info "Spectrum saved to $(res.path)"
     @info "Spectrum calculation complete for system $(truekey)"
+elseif key in keys(systems)
+    @info "Calculating spectrum and conductance for system $(key)"
+    res = calc_spectrum(key)
+    save(res.path, "res", res)
+    @info "Spectrum saved to $(res.path)"
+    @info "Conductance calculation for system $(key)"
+    res = calc_conductance(key)
+    save(res.path, "res", res)
+    @info "Conductance saved to $(res.path)"
+    @info "Spectrum and conductance calculation complete for system $(key)"
 else
     @error "Invalid key: $(key)"
 end

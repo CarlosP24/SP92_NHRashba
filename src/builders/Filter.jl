@@ -63,6 +63,6 @@ function add_NH_lead!(h::Quantica.AbstractHamiltonian, params::Filter_NH_Params)
     end
 
     sindex(r) = round(Int, r[1] / a0 + 1)
-    nh_term = @onsite!((o, r;) -> o - 1im * (γdict[sindex(r)][1] * σ0 + γdict[sindex(r)][2] * σy); region = r -> (r[1] >= sites[1]) && (r[1] < sites[end]))
+    nh_term = @onsite!((o, r;) -> o - 1im * (γdict[sindex(r)][1] * σ0 + γdict[sindex(r)][2] * σy); region = r -> (r[1] >= sites[1]) && (r[1] <= sites[end]))
     return h |> nh_term
 end
