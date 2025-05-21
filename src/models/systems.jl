@@ -232,3 +232,37 @@ systems["Filter_short_nh_11_mid"] = System(
         )
     )
 )
+
+######################################################
+
+systems["Filter_real"] = System(;
+    chain_params = Filter_Params(; 
+        L = 5000, 
+        α = 10.0,
+        μ = 0.0,
+    ),
+    NH_params = Filter_NH_Params(;),
+    params = Params(;
+        ωrng = subdiv(-.5, .5, 401) .+ 1e-3im,
+        Vzrng = subdiv(0, .1, 401), 
+        θrng = [0],
+        x = (:Vz, :θ),
+        nev = 50,
+    ),
+    lead_params = Lead_Params(; 
+        nambu = false,
+        t = 10)
+)
+
+γys = [1e-2, 5e-2, 1e-1, 5e-1, 1.0]
+for γy in γys
+    systems["Filter_real_nh_$(γy)"] = System(
+        systems["Filter_real"];
+        NH_params = build_NH_params(
+            systems["Filter_real"].chain_params, 
+            Dict(
+                [i => [0.0, γy]
+                for i in 1:systems["Filter_real"].chain_params.N])
+        )
+    )
+end
