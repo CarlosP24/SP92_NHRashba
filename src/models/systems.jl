@@ -243,8 +243,8 @@ systems["Filter_real"] = System(;
     ),
     NH_params = Filter_NH_Params(;),
     params = Params(;
-        ωrng = subdiv(-.5, .5, 401) .+ 1e-3im,
-        Vzrng = subdiv(0, .1, 401), 
+        ωrng = subdiv(-.25, .25, 401) .+ 1e-3im,
+        Vzrng = subdiv(0, .2, 501), 
         θrng = [0],
         x = (:Vz, :θ),
         nev = 50,
@@ -262,6 +262,18 @@ for γy in γys
             systems["Filter_real"].chain_params, 
             Dict(
                 [i => [0.0, γy]
+                for i in 1:systems["Filter_real"].chain_params.N])
+        )
+    )
+end
+
+for γy in γys
+    systems["Filter_real_nh11_$(γy)"] = System(
+        systems["Filter_real"];
+        NH_params = build_NH_params(
+            systems["Filter_real"].chain_params, 
+            Dict(
+                [i => [γy, γy]
                 for i in 1:systems["Filter_real"].chain_params.N])
         )
     )
