@@ -59,7 +59,7 @@ function niceticklabel(num)
     return L"%$(sign(num) * coef |> Int) \cdot 10^{%$(exp)}"
 end
 
-function fig_conductance(name::String; y = 0.0, maxG = 0.05, trans_coef = 0.01, ωlims = (-2.5, 2.5), im = true)
+function fig_conductance(name::String; y = 0.0, maxG = 0.05, trans_coef = 0.01, ωlims = (-2.5, 2.5), im = true, spectrum = true)
     res = load("data/Conductance/$(name).jld2")["res"]
     eres = load("data/Spectrum/$(name).jld2")["res"]
     @unpack Es = eres
@@ -106,8 +106,8 @@ function fig_conductance(name::String; y = 0.0, maxG = 0.05, trans_coef = 0.01, 
             lim = trans_coef * maxG
         end
         ax, hmap = plot_c(fig[i, j], Gs[i, j], ωrng, xrng, yrng, y; colorrange = (-lim, lim), labels = labs)
-        i == j && plot_o(ax, xrng, yrng, y, Es; im)
-        #vlines!(ax, 0.5; color = :black, linestyle = :dash)
+        spectrum && i == j && plot_o(ax, xrng, yrng, y, Es; im)
+        vlines!(ax, 0.05; color = :black, linestyle = :dash)
         #vlines!(ax, 1; color = :darkgreen, linestyle = :dash)
         ylims!(ax, (first(ωrng) |> real, last(ωrng) |> real))
         xlims!(ax, (first(xrng), last(xrng)))
@@ -115,7 +115,7 @@ function fig_conductance(name::String; y = 0.0, maxG = 0.05, trans_coef = 0.01, 
         j == 2 && hideydecorations!(ax, ticks = false, grid = false)
         i == 1 && hidexdecorations!(ax, ticks = false, grid = false)
 
-        Label(fig[i, j, Top()], L"$G_{%$(contact_dict[i]) %$(contact_dict[j])}$", fontsize = 15, padding = (180, 0, -140, 0))
+        Label(fig[i, j, Top()], L"$G_{%$(contact_dict[i]) %$(contact_dict[j])}$", fontsize = 15, padding = (-180, 0, -140, 0))
 
     end
     Colorbar(fig[1:2, 3], colormap = :balance, limits = (-maxG, maxG), ticks =( [-maxG, maxG], niceticklabel.([-maxG, maxG])), label = labs.barlabel, labelpadding = -25)
@@ -211,19 +211,27 @@ fig = fig_conductance("Filter_nh_example"; maxG = 1e-6, trans_coef = 1e-3)
 fig
 
 ##
-fig = fig_conductance("Filter_real"; maxG = 1e-5, trans_coef = 1e-5)
+fig = fig_conductance("Filter_real"; maxG = 1e-5, trans_coef = 1e-5, spectrum = false)
 fig
 
 ##
-fig = fig_conductance("Filter_real_nh_0.05"; maxG = 1e-5, trans_coef = 1e-5)
+fig = fig_conductance("Filter_real_nh_0.05"; maxG = 1e-5, trans_coef = 1e-4, spectrum = false)
 fig
 
 ##
-fig = fig_conductance("Filter_real_nh_0.01"; maxG = 1e-5, trans_coef = 1e-5)
+fig = fig_conductance("Filter_real_nh11_0.05"; maxG = 1e-5, trans_coef = 1e-6, spectrum = false)
 fig
 
 ##
-fig = fig_conductance("Filter_real_nh_0.1"; maxG = 1e-7, trans_coef = 1e-5)
+fig = fig_conductance("Filter_real_nh_0.01"; maxG = 1e-5, trans_coef = 1e-5, spectrum = false)
+fig
+
+##
+fig = fig_conductance("Filter_real_nh11_0.01"; maxG = 1e-5, trans_coef = 1e-6, spectrum = false)
+fig
+
+##
+fig = fig_conductance("Filter_real_nh_0.1"; maxG = 1e-7, trans_coef = 1e-5, spectrum = false)
 fig
 
 ##
