@@ -1,8 +1,8 @@
 @with_kw struct Params
-    µrng = subdiv(-4, 4, 401)
-    Vzrng = subdiv(0, 4, 401)
-    θrng = subdiv(0, 2π, 401)
-    ωrng = subdiv(-5, 5, 401) .+ 1e-2im
+    µrng = subdiv(-4, 4, 101)
+    Vzrng = subdiv(0, 4, 201)
+    θrng = subdiv(0, 2π, 101)
+    ωrng = subdiv(-5, 5, 201) .+ 1e-2im
     x = :µ
     outdir = "data"
     nev = 20
@@ -119,8 +119,8 @@ systems["Filter_base"] = System(;
     ),
     NH_params = Filter_NH_Params(;),
     params = Params(;
-        ωrng = subdiv(-5, 5, 401) .+ 1e-3im,
-        Vzrng = subdiv(0, 5, 401), 
+        ωrng = subdiv(-5, 5, 101) .+ 1e-3im,
+        Vzrng = subdiv(0, 5, 101), 
         θrng = subdiv(0, π/2, 11),
         x = (:Vz, :θ),
         nev = 50,
@@ -254,6 +254,8 @@ systems["Filter_real"] = System(;
         t = 10)
 )
 
+
+
 γys = [1e-2, 5e-2, 1e-1, 5e-1, 1.0]
 for γy in γys
     systems["Filter_real_nh_$(γy)"] = System(
@@ -275,6 +277,27 @@ for γy in γys
             Dict(
                 [i => [γy, γy]
                 for i in 1:systems["Filter_real"].chain_params.N])
+        )
+    )
+end
+
+
+systems["Filter_real_nh_0.05_transparent"] = System(
+    systems["Filter_real_nh_0.05"];
+    lead_params = Lead_Params(
+        systems["Filter_real"].lead_params; 
+        τ = 10, 
+    )
+)
+
+τts = 1:10
+
+for τt in τts
+    systems["Filter_real_nh_0.05_τ=$(τt)"] = System(
+        systems["Filter_real_nh_0.05"];
+        lead_params = Lead_Params(
+            systems["Filter_real"].lead_params; 
+            τ = τt, 
         )
     )
 end

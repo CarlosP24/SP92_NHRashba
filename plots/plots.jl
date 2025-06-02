@@ -219,6 +219,10 @@ fig = fig_conductance("Filter_real_nh_0.05"; maxG = 1e-5, trans_coef = 1e-4, spe
 fig
 
 ##
+fig = fig_conductance("Filter_real_nh_0.05_transparent"; maxG = 1, trans_coef = 1, spectrum = false)
+fig
+
+##
 fig = fig_conductance("Filter_real_nh11_0.05"; maxG = 1e-5, trans_coef = 1e-6, spectrum = false)
 fig
 
