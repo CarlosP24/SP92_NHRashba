@@ -301,3 +301,13 @@ for τt in τts
         )
     )
 end
+
+for τt in τts
+    systems["Filter_real_nh11_0.05_τ=$(τt)"] = System(
+        systems["Filter_real_nh11_0.05"];
+        lead_params = Lead_Params(
+            systems["Filter_real"].lead_params; 
+            τ = τt, 
+        )
+    )
+end

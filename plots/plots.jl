@@ -15,7 +15,7 @@ labels = Dict(
 
 function plot_conductance(pos, Gs, ωrng, μrng; colorrange = (-.1, .1), labels = labels["Kitaev"])
     ax = Axis(pos; xlabel = labels.xlabel, ylabel = labels.ylabel)
-    hmap = heatmap!(ax, μrng, real.(ωrng), Gs'; colormap = :balance, colorrange)
+    hmap = heatmap!(ax, μrng, real.(ωrng), Gs'; colormap = :balance, colorrange, rasterize = true)
     #vlines!(ax, 1; color = :darkgreen, linestyle = :dash)
     return ax, hmap
 end
@@ -120,7 +120,16 @@ function fig_conductance(name::String; y = 0.0, maxG = 0.05, trans_coef = 0.01, 
     end
     Colorbar(fig[1:2, 3], colormap = :balance, limits = (-maxG, maxG), ticks =( [-maxG, maxG], niceticklabel.([-maxG, maxG])), label = labs.barlabel, labelpadding = -25)
     
-    system.chain_params isa Filter_Params && Label(fig[1, 1:2, Top()], L"$\theta = %$(round(Int, y/π))\pi$")
+    #system.chain_params isa Filter_Params && Label(fig[1, 1:2, Top()], L"$\theta = %$(round(Int, y/π))\pi$")
+    if occursin("=", name)
+        τ_value = match(r"=(.*)", name)
+        if τ_value !== nothing
+            τ_num = tryparse(Float64, τ_value.captures[1])/10
+            if τ_num !== nothing
+            Label(fig[1, 1:2, Top()], L"\tau = %$(τ_num)")
+            end
+        end
+    end
     colgap!(fig.layout, 1, 5)
     colgap!(fig.layout, 2, 5)
     rowgap!(fig.layout, 1, 5)
@@ -245,3 +254,10 @@ fig
 ##
 fig = fig_conductance("Filter_real_nh_1.0"; maxG = 1e-8, trans_coef = 1e-5)
 fig
+
+##
+maxGs = [1e-3, 1e-3, 1e-3, 1e-2, 1e-2, 1e-1, 1e-1, 1e-1, 1, 1]
+for (τ, maxG) in zip(1:10, maxGs)
+    fig = fig_conductance("Filter_real_nh_0.05_τ=$τ"; maxG, trans_coef = 1, spectrum = false)
+    save("plots/figures/conductance_filter_real_nh_0.05_τ=$(τ)_clean.pdf", fig)
+end
