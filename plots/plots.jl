@@ -261,3 +261,6 @@ for (τ, maxG) in zip(1:10, maxGs)
     fig = fig_conductance("Filter_real_nh_0.05_τ=$τ"; maxG, trans_coef = 1, spectrum = false)
     save("plots/figures/conductance_filter_real_nh_0.05_τ=$(τ)_clean.pdf", fig)
 end
+
+##
+fig = fig_conductance("Filter_real_nh11_0.05_τ=10"; maxG = 1e-1, trans_coef = 1e-1, spectrum = true)
