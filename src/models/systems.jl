@@ -3,6 +3,7 @@
     Vzrng = subdiv(0, 4, 201)
     θrng = subdiv(0, 2π, 101)
     ωrng = subdiv(-5, 5, 201) .+ 1e-2im
+    τrng = subdiv(0.1, 1.0, 10)
     x = :µ
     outdir = "data"
     nev = 20

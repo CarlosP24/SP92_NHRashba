@@ -5,6 +5,7 @@ include("builders/Filter.jl")
 include("builders/leads.jl")
 
 include("models/systems.jl")
+include("models/Filters.jl")
 
 keyword = ARGS[1]
 

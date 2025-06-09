@@ -42,6 +42,9 @@ function calc_conductance(name::String)
         elseif x == (:Vz, :θ)
             Gf = (ω, Vz, θ) -> G(ω; Vz, θ)
             xrng = (params.Vzrng, params.θrng)
+        elseif x == (:Vz, :τ)
+            Gf = (ω, Vz, τ) -> G(ω; Vz, τ)
+            xrng = (params.Vzrng, params.τrng)
         else
             throw(ArgumentError("x must be :µ, :Vz, :θ, or (:Vz, :θ)"))
         end

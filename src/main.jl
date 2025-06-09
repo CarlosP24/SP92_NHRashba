@@ -22,6 +22,7 @@ using JLD2
     include("builders/leads.jl")
 
     include("models/systems.jl")
+    include("models/Filters.jl")
     include("parallelizers/pgeneric.jl")
     include("parallelizers/pspectrum.jl")
 

@@ -20,6 +20,9 @@ function calc_spectrum(name::String)
     elseif x == (:Vz, :θ)
         hf = (Vz, θ) -> h(Vz = Vz, θ = θ)[()]
         xrng = (params.Vzrng, params.θrng)
+    elseif x == (:Vz, :τ)
+        hf = (Vz, τ) -> h(Vz = Vz, τ = τ)[()]
+        xrng = (params.Vzrng, params.τrng)
     else
         throw(ArgumentError("x must be :µ or :Vz"))
     end
