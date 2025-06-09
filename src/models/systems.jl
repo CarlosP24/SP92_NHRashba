@@ -313,3 +313,31 @@ for τt in τts
         )
     )   
 end
+
+systems["Filter_short"] = System(systems["Filter_real"];
+    chain_params = Filter_Params(; 
+        L = 500, 
+        α = 10.0,
+        μ = 0.0,
+    ),
+)
+
+systems["Filter_short_nh11_0.05_τ=1.0"] = System(
+    systems["Filter_short"];
+    NH_params = build_NH_params(
+        systems["Filter_short"].chain_params, 
+        Dict(
+            [i => [0.05, 0.05]
+            for i in 1:systems["Filter_short"].chain_params.N])
+    ),
+            lead_params = Lead_Params(; 
+            τ = 1, 
+            t = 1,
+        )
+)
+
+systems["Filter_short_nh11_0.05_τ=0.1"] = System(systems["Filter_short_nh11_0.05_τ=1.0"];
+    lead_params = Lead_Params(systems["Filter_short_nh11_0.05_τ=1.0"].lead_params; 
+        τ = 0.1, 
+    )
+)

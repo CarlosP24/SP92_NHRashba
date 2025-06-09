@@ -263,4 +263,4 @@ for (τ, maxG) in zip(1:10, maxGs)
 end
 
 ##
-fig = fig_conductance("Filter_real_nh11_0.05_τ=10"; maxG = 1e-1, trans_coef = 1e-1, spectrum = true)
+fig = fig_conductance("Filter_short_nh11_0.05_τ=0.1"; maxG = 1e-2, trans_coef = 1e-3, spectrum = true)
