@@ -116,6 +116,10 @@ function find_Δ(G, iE, Vzrng, iτ; ia = 1, ib = 2, dωi::Int = 0)
     end
     return Δ
 end
+function derivate(Δ, Vzrng)
+    itp = interpolate((Vzrng,), Δ, Gridded(Linear()))
+    return [Interpolations.gradient(itp, V)[1] for V in Vzrng]
+end
 function fig_difGs(name::String; τ = 1)
     res = load("data/Conductance/$(name).jld2")["res"];
     eres = load("data/Spectrum/$(name).jld2")["res"];
@@ -131,6 +135,7 @@ function fig_difGs(name::String; τ = 1)
 
     dω = γ/2
     dωi = round(Int, dω/dω0)
+    dωi = 0
 
     rEs = Es[:, iτ] .|> real
     rEs = [sort(e) for e in rEs]
@@ -141,18 +146,30 @@ function fig_difGs(name::String; τ = 1)
     Δ1 = find_Δ(Gs, i1, Vzrng, iτ; dωi)
     Δ2 = find_Δ(Gs, i2, Vzrng, iτ; dωi)
 
+    dΔ1 = derivate(Δ1, Vzrng)
+    dΔ2 = derivate(Δ2, Vzrng)
+
+    ddΔ1 = derivate(dΔ1, Vzrng)
+    ddΔ2 = derivate(dΔ2, Vzrng)
+
     Δlocal = find_Δ(Gs, i1, Vzrng, iτ; ia = 1, ib = 1)
 
     fig = Figure()
     xticks = ([first(Vzrng), γ, last(Vzrng)], [L"0", L"\gamma_y", L"%$(last(Vzrng))"])
 
     ax = Axis(fig[1, 1]; xlabel = L"$V_Z$ (meV)", ylabel = L"$\left|(G_{LR} - G_{RL})/G_{LR} \right|$", xticks, )
-    lines!(ax, Vzrng, Δ1; color = :purple, label = L"$1$", linewidth = 4)
-    lines!(ax, Vzrng, Δ2; color = :purple, linestyle = :dash, label = L"$2$", linewidth = 4)
-    lines!(ax, Vzrng, Δlocal; color = :red, linestyle = :solid, label = L"$(G_{RR} - G_{LL})/G_{RR}$", linewidth = 4)
+    axd = Axis(fig[2, 1]; xlabel = L"$V_Z$ (meV)", ylabel = L"$\partial^2_{V_Z} \left| \left( G_{LR} - G_{RL} \right)/G_{LR}\right|$", xticks)
+    lines!(ax, Vzrng, Δ1; color = :blue, label = L"$1$", linewidth = 4)
+    lines!(ax, Vzrng, Δ2; color = :green, linestyle = :dash, label = L"$2$", linewidth = 4)
+    lines!(ax, Vzrng, Δlocal; color = :red, linestyle = :solid, label = L"$\left|(G_{RR} - G_{LL})/G_{RR}\right|$", linewidth = 4)
     xlims!(ax, (first(Vzrng), last(Vzrng)))
 
+    scatter!(axd, Vzrng, ddΔ1; color = :blue, label = L"$1$")
+    scatter!(axd, Vzrng, ddΔ2; color = :green, label = L"$2$")
+    xlims!(axd, (first(Vzrng), last(Vzrng)))
+    hidexdecorations!(ax, ticks = false, grid = false)
     axislegend(ax, position = (1, 0.3),)
+    axislegend(axd, position = (1, 0),)
     return fig 
 end
 
