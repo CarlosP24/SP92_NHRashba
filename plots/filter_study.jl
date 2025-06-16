@@ -158,18 +158,19 @@ function fig_difGs(name::String; τ = 1)
     xticks = ([first(Vzrng), γ, last(Vzrng)], [L"0", L"\gamma_y", L"%$(last(Vzrng))"])
 
     ax = Axis(fig[1, 1]; xlabel = L"$V_Z$ (meV)", ylabel = L"$\left|(G_{LR} - G_{RL})/G_{LR} \right|$", xticks, )
-    axd = Axis(fig[2, 1]; xlabel = L"$V_Z$ (meV)", ylabel = L"$\partial^2_{V_Z} \left| \left( G_{LR} - G_{RL} \right)/G_{LR}\right|$", xticks)
+    #axd = Axis(fig[2, 1]; xlabel = L"$V_Z$ (meV)", ylabel = L"$\partial^2_{V_Z} \left| \left( G_{LR} - G_{RL} \right)/G_{LR}\right|$", xticks)
     lines!(ax, Vzrng, Δ1; color = :blue, label = L"$1$", linewidth = 4)
     lines!(ax, Vzrng, Δ2; color = :green, linestyle = :dash, label = L"$2$", linewidth = 4)
     lines!(ax, Vzrng, Δlocal; color = :red, linestyle = :solid, label = L"$\left|(G_{RR} - G_{LL})/G_{RR}\right|$", linewidth = 4)
     xlims!(ax, (first(Vzrng), last(Vzrng)))
 
-    scatter!(axd, Vzrng, ddΔ1; color = :blue, label = L"$1$")
-    scatter!(axd, Vzrng, ddΔ2; color = :green, label = L"$2$")
-    xlims!(axd, (first(Vzrng), last(Vzrng)))
-    hidexdecorations!(ax, ticks = false, grid = false)
+    #lines!(axd, Vzrng, dΔ1; color = :blue, label = L"$1$", linewidth = 2)
+    #vlines!(axd, (γ + 0.009) .* [0.5, 1, 2]; color = :black, linestyle = :dash)
+    #lines!(axd, Vzrng, dΔ2; color = :green, label = L"$2$", linewidth = 1)
+    #xlims!(axd, (first(Vzrng), last(Vzrng)))
+    #hidexdecorations!(ax, ticks = false, grid = false)
     axislegend(ax, position = (1, 0.3),)
-    axislegend(axd, position = (1, 0),)
+    #axislegend(axd, position = (1, 0),)
     return fig 
 end
 

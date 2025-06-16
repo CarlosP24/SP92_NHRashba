@@ -6,8 +6,8 @@ systems["F_Base"] = System(;
     ),
     NH_params = Filter_NH_Params(;),
     params = Params(;
-        ωrng = subdiv(-.25, .25, 801) .+ 1e-3im,
-        Vzrng = subdiv(0, .2, 1001), 
+        ωrng = subdiv(-.25, .40, 801) .+ 1e-3im,
+        Vzrng = subdiv(0, .3, 1001), 
         τrng = [1.0],
         x = (:Vz, :τ),
         nev = 50,
