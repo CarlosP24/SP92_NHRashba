@@ -35,8 +35,8 @@ function plot_over_spectrum(ax, xrng, yrng, y, Es; im = true)
 end
 
 contact_dict = Dict(
-    1 => "R",
-    2 => "L",
+    1 => "L",
+    2 => "R",
 )
 
 function niceticklabel(num)

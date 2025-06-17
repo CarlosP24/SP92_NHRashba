@@ -16,18 +16,16 @@ using JLD2
     using ProgressMeter, Parameters
     using LinearAlgebra, Arpack
 
-    include("builders/Kitaev.jl")
     include("builders/Wire.jl")
-    include("builders/Filter.jl")
     include("builders/leads.jl")
 
     include("models/systems.jl")
-    include("models/Filters.jl")
     include("parallelizers/pgeneric.jl")
     include("parallelizers/pspectrum.jl")
 
     include("calculations/Spectrum.jl")
     include("calculations/Conductance.jl")
+    include("calculations/LDOS.jl")
 end
 
 # Run
@@ -48,6 +46,13 @@ elseif endswith(key, "_spec")
     save(res.path, "res", res)
     @info "Spectrum saved to $(res.path)"
     @info "Spectrum calculation complete for system $(truekey)"
+elseif endswith(key, "_ldos")
+    truekey = replace(key, "_ldos" => "")
+    @info "Calculating LDOS for system $(truekey)"
+    res = calc_LDOS(truekey)
+    save(res.path, "res", res)
+    @info "LDOS saved to $(res.path)"
+    @info "LDOS calculation complete for system $(truekey)"
 elseif key in keys(systems)
     @info "Calculating spectrum and conductance for system $(key)"
     res = calc_spectrum(key)
@@ -58,6 +63,10 @@ elseif key in keys(systems)
     save(res.path, "res", res)
     @info "Conductance saved to $(res.path)"
     @info "Spectrum and conductance calculation complete for system $(key)"
+    @info "LDOS calculation for system $(key)"
+    res = calc_LDOS(key)
+    save(res.path, "res", res)
+    @info "LDOS saved to $(res.path)"
 else
     @error "Invalid key: $(key)"
 end

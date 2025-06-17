@@ -2,7 +2,7 @@
 
 julia_version = "1.11.1"
 manifest_format = "2.0"
-project_hash = "eb7816e1815d3dcbbd05ff33d58390a9b6ad62bc"
+project_hash = "cfac7e50ece06725482a94468fa99afd497f1792"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -51,6 +51,18 @@ version = "0.4.2"
 [[deps.ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
 version = "1.1.2"
+
+[[deps.Arpack]]
+deps = ["Arpack_jll", "Libdl", "LinearAlgebra", "Logging"]
+git-tree-sha1 = "9b9b347613394885fd1c8c7729bfc60528faa436"
+uuid = "7d9fca2a-8960-54d3-9f78-7d1dccf2cb97"
+version = "0.5.4"
+
+[[deps.Arpack_jll]]
+deps = ["Artifacts", "CompilerSupportLibraries_jll", "JLLWrappers", "Libdl", "OpenBLAS_jll", "Pkg"]
+git-tree-sha1 = "5ba6c757e8feccf03a1554dfaf3e26b3cfc7fd5e"
+uuid = "68821587-b530-5797-8361-c406ea357684"
+version = "3.5.1+1"
 
 [[deps.Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
@@ -1094,7 +1106,9 @@ version = "2.11.2"
 
 [[deps.Quantica]]
 deps = ["Compat", "DelimitedFiles", "Dictionaries", "ExprTools", "FrankenTuples", "FunctionWrappers", "IntervalTrees", "LinearAlgebra", "NearestNeighbors", "ProgressMeter", "QuadGK", "Random", "SparseArrays", "SpecialFunctions", "StaticArrays", "Statistics", "SuiteSparse"]
-git-tree-sha1 = "48c2d644f1a6e77b39c344b778da5b6e22142a46"
+git-tree-sha1 = "d85e2f9754889321e4764fe82e9d9c8c3ccae38f"
+repo-rev = "master"
+repo-url = "https://github.com/pablosanjose/Quantica.jl.git"
 uuid = "ae5ea0c6-3f5e-46a2-bc28-a7c4c7a4773c"
 version = "1.2.0"
 

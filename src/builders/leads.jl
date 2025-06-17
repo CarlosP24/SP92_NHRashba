@@ -3,7 +3,7 @@
     t::Float64 = 1
     τ::Float64 = 0.1
     dims::Int = 2
-    nambu::Bool = true
+    nambu::Bool = false
 end
 
 function build_lead(params::Lead_Params)
@@ -18,5 +18,5 @@ function build_lead(params::Lead_Params)
     lat = LP.linear(; )
     model = onsite(µ * base) + hopping(t * base)
     h = lat |> hamiltonian(model; orbitals = dims)
-    return h, τ
+    return h, τ*t
 end
