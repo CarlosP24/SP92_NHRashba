@@ -25,7 +25,6 @@ using JLD2
 
     include("calculations/Spectrum.jl")
     include("calculations/Conductance.jl")
-    include("calculations/LDOS.jl")
 end
 
 # Run
@@ -46,13 +45,6 @@ elseif endswith(key, "_spec")
     save(res.path, "res", res)
     @info "Spectrum saved to $(res.path)"
     @info "Spectrum calculation complete for system $(truekey)"
-elseif endswith(key, "_ldos")
-    truekey = replace(key, "_ldos" => "")
-    @info "Calculating LDOS for system $(truekey)"
-    res = calc_LDOS(truekey)
-    save(res.path, "res", res)
-    @info "LDOS saved to $(res.path)"
-    @info "LDOS calculation complete for system $(truekey)"
 elseif key in keys(systems)
     @info "Calculating spectrum and conductance for system $(key)"
     res = calc_spectrum(key)

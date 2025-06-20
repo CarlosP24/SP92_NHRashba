@@ -1,11 +1,13 @@
 using Quantica, Parameters
-include("builders/Kitaev.jl")
 include("builders/Wire.jl")
-include("builders/Filter.jl")
 include("builders/leads.jl")
 
 include("models/systems.jl")
-include("models/Filters.jl")
+include("parallelizers/pgeneric.jl")
+include("parallelizers/pspectrum.jl")
+
+include("calculations/Spectrum.jl")
+include("calculations/Conductance.jl")
 
 keyword = ARGS[1]
 

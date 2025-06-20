@@ -1,18 +1,15 @@
 labels = Dict(
-    "Kitaev" => (; xlabel = L"\mu / t", ylabel = L"\omega / t", barlabel = L"$G$ ($e^2/h$)"),
-    "Wire_µ" => (; xlabel = L"$\mu$ (meV)", ylabel = L"$\omega$ (meV)", barlabel = L"$G$ ($e^2/h$)"),
-    "Wire_Vz" => (; xlabel = L"$V_z$ (meV)", ylabel = L"$\omega$ (meV)", barlabel = L"$G$ ($e^2/h$)"),
-    "Filter" => (; xlabel = L"$V_z$ (meV)", ylabel = L"$\omega$ (meV)", barlabel = L"$G$ ($e^2/h$)"),
+    "Wire" => (; xlabel = L"$V_{\text{Z}}$ (meV)", ylabel = L"$V$ (mV)", barlabel = L"$G$ ($e^2/h$)"),
 )
 
-function plot_conductance(pos, Gs, ωrng, μrng; colorrange = (-.1, .1), labels = labels["Kitaev"])
+function plot_conductance(pos, Gs, ωrng, μrng; colorrange = (-.1, .1), labels = labels["Wire"])
     ax = Axis(pos; xlabel = labels.xlabel, ylabel = labels.ylabel)
-    hmap = heatmap!(ax, μrng, real.(ωrng), Gs'; colormap = :balance, colorrange, rasterize = true)
+    hmap = heatmap!(ax, μrng, real.(ωrng), Gs'; colormap = :balance, colorrange, rasterize = 5)
     #vlines!(ax, 1; color = :darkgreen, linestyle = :dash)
     return ax, hmap
 end
 
-function plot_conductance(pos, Gs, ωrng, xrng, yrng, y; colorrange = (-.1, .1), labels = labels["Filter"])
+function plot_conductance(pos, Gs, ωrng, xrng, yrng, y; colorrange = (-.1, .1), labels = labels["Wire"])
     iy = findmin(x -> abs(x - y), yrng)[2]
     Gs = Gs[:, :, iy]
     return plot_conductance(pos, Gs, ωrng, xrng; colorrange = colorrange, labels = labels)
