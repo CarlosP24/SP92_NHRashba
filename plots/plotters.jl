@@ -15,10 +15,10 @@ function plot_conductance(pos, Gs, ωrng, xrng, yrng, y; colorrange = (-.1, .1),
     return plot_conductance(pos, Gs, ωrng, xrng; colorrange = colorrange, labels = labels)
 end
 
-function plot_over_spectrum(ax, µrng, Es; im = true)
+function plot_over_spectrum(ax, µrng, Es; im = true, kw...)
     for E in eachrow(Es)
         #scatter!(ax, µrng[1:5:end], real.(E[1:5:end]); color = (:white, 0.5), markersize = 2)
-        scatter!(ax, µrng, real.(E); color = (:green, 0.9), markersize = 1)
+        scatter!(ax, µrng, real.(E); color = (:green, 0.9), kw...)
         im && scatter!(ax, µrng, imag.(E); color = (:red, 0.5), markersize = 1)
     end
 end

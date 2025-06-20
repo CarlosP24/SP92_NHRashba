@@ -1,4 +1,4 @@
-function fig_bands(name::String; Vz = 0.1,  dir = "data/Conductance", colormap = :RdBu_9)
+function fig_bands(name::String; Vz = 0.2,  dir = "data/Conductance", colormap = :RdBu_9)
     path = "$(dir)/$(name).jld2"
     res = load(path)["res"]
     @unpack t, α, μ, a0 = res.system.chain_params
@@ -15,19 +15,10 @@ function fig_bands(name::String; Vz = 0.1,  dir = "data/Conductance", colormap =
         xticksize = 0,
         yticks = ([0], [L"\mu"])
     )
-    
-    # function Ecolor(k, ω; p, Vz)
-    #     Eplus = E(k, p, Vz)
-    #     if abs(ω - real(Eplus)) < abs(abs(imag(Eplus)) - γ0)*2
-    #         return imag(Eplus)
-    #     else
-    #         return NaN
-    #     end
-    # end
 
-    function Ecolor(k, ω; p, Vz)
+    function Ecolor(k, ω; p, Vz, Δω = 0.05)
         Eplus = E(k, p, Vz)
-        if abs(ω - real(Eplus)) < 0.05
+        if abs(ω - real(Eplus)) < Δω
             return imag(Eplus)
         else
             return NaN
