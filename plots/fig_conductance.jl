@@ -1,4 +1,3 @@
- labstyle = (font = "CMU Serif Bold", fontsize   = 20)
 function fig_conductance(name::String; dir = "data/Conductance", maxGLL = 2e-2, maxGRL = 5e-5)
     path = "$(dir)/$(name).jld2"
     res = load(path)["res"]

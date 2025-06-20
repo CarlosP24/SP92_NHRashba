@@ -1,5 +1,5 @@
 labels = Dict(
-    "Wire" => (; xlabel = L"$V_{\text{Z}}$ (meV)", ylabel = L"$V$ (mV)", barlabel = L"$G$ ($e^2/h$)"),
+    "Wire" => (; xlabel = L"$B$ (meV)", ylabel = L"$V$ (mV)", barlabel = L"$G$ ($e^2/h$)"),
 )
 
 function plot_conductance(pos, Gs, ωrng, μrng; colorrange = (-.1, .1), labels = labels["Wire"])
@@ -22,7 +22,7 @@ function plot_over_spectrum(ax, µrng, Es; im = true)
         im && scatter!(ax, µrng, imag.(E); color = (:red, 0.5), markersize = 1)
     end
 end
-
+ 
 function plot_over_spectrum(ax, xrng, yrng, y, Es; im = true)
     iy = findmin(x -> abs(x - y), yrng)[2]
     Es = Es[:, iy]
@@ -45,3 +45,5 @@ function niceticklabel(num)
     coef = ceil(Int, anum * 10^float(exp))
     return L"%$(sign(num) * coef |> Int) \cdot 10^{%$(exp)}"
 end
+
+labstyle = (font = "CMU Serif Bold", fontsize   = 20)
