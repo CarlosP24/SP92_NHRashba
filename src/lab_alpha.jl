@@ -26,7 +26,7 @@ include("parallelizers/pspectrum.jl")
 
 include("calculations/Spectrum.jl")
 include("calculations/Conductance.jl")
-include("calculations/LDOS.jl")
+#include("calculations/LDOS.jl")
 
 ##
 name = "base_wire_nh"

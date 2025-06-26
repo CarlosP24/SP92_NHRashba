@@ -1,10 +1,22 @@
+function kappa2(n, α, L, m, ħ2ome)
+    θ = α * L * m / ħ2ome
+    d = 1 - (θ / (n * π))^2
+    f = sin(θ) / θ
+    return (f / d)^2
+end
+
+function ep(n, Γ, params)
+    @unpack α, L, m0, ħ2ome = params
+    return Γ /  sqrt(kappa2(n, α, L, m0, ħ2ome))
+end
+
 function fig_spectrum(name::String; dirS = "data/Spectrum", dirG = "data/Conductance", maxG = 2e-2)
-    path = "$(dir)/$(name).jld2"
+    path = "$(dirS)/$(name).jld2"
     res = load(path)["res"]
 
     resG = load("$(dirG)/$(name).jld2")["res"]
     @unpack Gs, system = resG
-    @unpack t, α, μ, a0 = res.system.chain_params
+    @unpack t, α, μ, a0 = system.chain_params
     t = 1
     α = 1
     a0 = 1
@@ -13,11 +25,11 @@ function fig_spectrum(name::String; dirS = "data/Spectrum", dirG = "data/Conduct
     ωrng = real.(ωrng)
     γ = system.NH_params.γdict |> first |> last |> first
 
-    fig = Figure(size = (600, 500), fontsize = 16)
+    fig = Figure(size = (600, 520), fontsize = 16)
 
     ax, hmap = plot_conductance(fig[1, 1], Gs[1, 1], ωrng, Vzrng; colorrange = (-maxG, maxG))
     ax.yticks = ([-0.2, 0, 0.3], [L"-0.2", L"0", L"0.3"])
-    ax.xticks = ([0, γ, 0.3], [L"0", L"γ_y", L"0.3"])
+    ax.xticks = ([0, 0.3], [L"0",  L"0.3"])
     ax.ylabelpadding = -15
     ax.xlabelpadding = -15
     for E in eachrow(Es)
@@ -25,10 +37,15 @@ function fig_spectrum(name::String; dirS = "data/Spectrum", dirG = "data/Conduct
         #scatter!(ax, Vzrng, imag.(E); color = (:red, 0.5), markersize = 1)
     end
     ylims!(ax, (first(ωrng), last(ωrng)))
-    vlines!(ax, γ; color = :black, linestyle = :dash)
+    vlines!(ax, γ; color = :black, linestyle = :dash, label = L"$\gamma_y$", linewidth = 2)
+
+    vlines!(ax, [ep(1, γ, system.chain_params)]; ymin = 0.3, ymax = 0.6, color = "#437F97", linestyle = :dash, label = L"$\gamma_y/\left|\kappa_1\right|$", linewidth = 2)
+
+    vlines!(ax, [ep(2, γ, system.chain_params)]; ymin = 0.6, ymax = 0.9, color = "#564787", linestyle = :dash, label = L"$\gamma_y/\left|\kappa_2\right|$", linewidth = 2)
 
     Colorbar(fig[1, 2]; colormap = cgrad(:balance, 256)[128:end], limits = (0, 1), label = L"$G_{\text{RR}}$ ($e^2/h$)", ticks = ([0, 1], [L"0", niceticklabel(maxG)]), labelpadding = -30)
 
+    Legend(fig[1, 1, Top()], ax; orientation = :horizontal, padding = (0, 0, 10, 0), framevisible = false)
     colgap!(fig.layout, 1, 5)
 
     fig_bands = fig[2, 1] = GridLayout()
