@@ -10,7 +10,7 @@ function ep(n, Γ, params)
     return Γ /  sqrt(kappa2(n, α, L, m0, ħ2ome))
 end
 
-function fig_spectrum(name::String; dirS = "data/Spectrum", dirG = "data/Conductance", maxG = 2e-2)
+function fig_spectrum(name::String; dirS = "data/Spectrum", dirG = "data/Conductance", maxG = 2e-2, colors = cgrad(:buda, 10, categorical = true)[[2, 8]])
     path = "$(dirS)/$(name).jld2"
     res = load(path)["res"]
 
@@ -21,9 +21,12 @@ function fig_spectrum(name::String; dirS = "data/Spectrum", dirG = "data/Conduct
     α = 1
     a0 = 1
     @unpack Es, system = res
+    Es = mapslices(x -> sort(x, by=real), Es; dims=1)
     @unpack Vzrng, ωrng = system.params
     ωrng = real.(ωrng)
     γ = system.NH_params.γdict |> first |> last |> first
+    Vγ1 = ep(1, γ, system.chain_params)
+    iVγ1 = findmin(abs.(Vzrng .- Vγ1))[2]
 
     fig = Figure(size = (600, 520), fontsize = 16)
 
@@ -32,20 +35,26 @@ function fig_spectrum(name::String; dirS = "data/Spectrum", dirG = "data/Conduct
     ax.xticks = ([0, 0.3], [L"0",  L"0.3"])
     ax.ylabelpadding = -15
     ax.xlabelpadding = -15
-    for E in eachrow(Es)
-        scatter!(ax, Vzrng, real.(E); color = (:green, 0.9), markersize = 3)
-        #scatter!(ax, Vzrng, imag.(E); color = (:red, 0.5), markersize = 1)
+    for (i, E) in enumerate(eachrow(Es))
+        color = get(colors, i, :green)
+        if i != 2
+            lines!(ax, Vzrng, real.(E); color, linewidth = 2)
+        else
+            lines!(ax, Vzrng[1:iVγ1], real.(E)[1:iVγ1]; color, linestyle = :dash)
+            lines!(ax, Vzrng[iVγ1:end], real.(E)[iVγ1:end]; color)
+        end
+        #scatter!(ax, Vzrng, imag.(E); color = (colors[2], 0.5), markersize = 1)
     end
     ylims!(ax, (first(ωrng), last(ωrng)))
     vlines!(ax, γ; color = :black, linestyle = :dash, label = L"$\gamma_y$", linewidth = 2)
 
-    vlines!(ax, [ep(1, γ, system.chain_params)]; ymin = 0.3, ymax = 0.6, color = "#437F97", linestyle = :dash, label = L"$\gamma_y/\left|\kappa_1\right|$", linewidth = 2)
+    vlines!(ax, Vγ1 ; ymin = 0.3, ymax = 0.6, color = :white, linestyle = :dash, label = L"$\gamma_y/\left|\kappa_1\right|$", linewidth = 2)
 
-    vlines!(ax, [ep(2, γ, system.chain_params)]; ymin = 0.6, ymax = 0.9, color = "#564787", linestyle = :dash, label = L"$\gamma_y/\left|\kappa_2\right|$", linewidth = 2)
+    vlines!(ax, [ep(2, γ, system.chain_params)]; ymin = 0.6, ymax = 0.9, color = :navyblue, linestyle = :dash, label = L"$\gamma_y/\left|\kappa_2\right|$", linewidth = 2)
 
     Colorbar(fig[1, 2]; colormap = cgrad(:balance, 256)[128:end], limits = (0, 1), label = L"$G_{\text{RR}}$ ($e^2/h$)", ticks = ([0, 1], [L"0", niceticklabel(maxG)]), labelpadding = -30)
 
-    Legend(fig[1, 1, Top()], ax; orientation = :horizontal, padding = (0, 0, 10, 0), framevisible = false)
+    axislegend( ax; position = (1, 0.6), orientation = :horizontal, padding = (0, 0, 10, 0), framevisible = false)
     colgap!(fig.layout, 1, 5)
 
     fig_bands = fig[2, 1] = GridLayout()
@@ -65,15 +74,15 @@ function fig_spectrum(name::String; dirS = "data/Spectrum", dirG = "data/Conduct
     )
     hidexdecorations!(ax, ticks = false, ticklabels = false, label = false)
 
-    lines!(ax, krngp, E.(krngp, 1, Vz) .|> real; color = :red, linewidth = 1.5)
-    lines!(ax, krngn, E.(krngn, -1, Vz) .|> real; color = :red, linewidth = 1.5)
-    lines!(ax, krngp, E.(krngp, 1, Vz) .|> imag; color = :red, linestyle = :dash, linewidth = 1.5)
-    lines!(ax, krngn, E.(krngn, -1, Vz) .|> imag; color = :red, linestyle = :dash, linewidth = 1.5)
+    lines!(ax, krngp, E.(krngp, 1, Vz) .|> real; color = colors[1], linewidth = 1.5)
+    lines!(ax, krngn, E.(krngn, -1, Vz) .|> real; color = colors[1], linewidth = 1.5)
+    lines!(ax, krngp, E.(krngp, 1, Vz) .|> imag; color = colors[1], linestyle = :dash, linewidth = 1.5)
+    lines!(ax, krngn, E.(krngn, -1, Vz) .|> imag; color = colors[1], linestyle = :dash, linewidth = 1.5)
 
-    lines!(ax, krngp, E.(krngp, -1, Vz) .|> real; color = :blue, linewidth = 1.5)
-    lines!(ax, krngn, E.(krngn, 1, Vz) .|> real; color = :blue, linewidth = 1.5)
-    lines!(ax, krngp, E.(krngn, 1, Vz) .|> imag; color = :blue, linestyle = :dash, linewidth = 1.5)
-    lines!(ax, krngn, E.(krngp, -1, Vz) .|> imag; color = :blue, linestyle = :dash, linewidth = 1.5)
+    lines!(ax, krngp, E.(krngp, -1, Vz) .|> real; color = colors[2], linewidth = 1.5)
+    lines!(ax, krngn, E.(krngn, 1, Vz) .|> real; color = colors[2], linewidth = 1.5)
+    lines!(ax, krngp, E.(krngn, 1, Vz) .|> imag; color = colors[2], linestyle = :dash, linewidth = 1.5)
+    lines!(ax, krngn, E.(krngp, -1, Vz) .|> imag; color = colors[2], linestyle = :dash, linewidth = 1.5)
 
     xlims!(ax, (first(krng), last(krng)))
     ylims!(ax, (-0.7, 2.0))
@@ -102,11 +111,11 @@ function fig_spectrum(name::String; dirS = "data/Spectrum", dirG = "data/Conduct
 
     hidexdecorations!(ax, ticks = false, ticklabels = false, label = false)
 
-    lines!(ax, krng, E.(krng, 1, Vz) .|> real; color = :red, linewidth = 1.5)
-    lines!(ax, krng, E.(krng, -1, Vz) .|> real; color = :blue, linewidth = 1.5)
+    lines!(ax, krng, E.(krng, 1, Vz) .|> real; color = colors[1], linewidth = 1.5)
+    lines!(ax, krng, E.(krng, -1, Vz) .|> real; color = colors[2], linewidth = 1.5)
 
-    lines!(ax, krng, E.(krng, 1, Vz) .|> imag; color = :red, linestyle = :dash, linewidth = 1.5)
-    lines!(ax, krng, E.(krng, -1, Vz) .|> imag; color = :blue, linestyle = :dash, linewidth = 1.5)
+    lines!(ax, krng, E.(krng, 1, Vz) .|> imag; color = colors[1], linestyle = :dash, linewidth = 1.5)
+    lines!(ax, krng, E.(krng, -1, Vz) .|> imag; color = colors[2], linestyle = :dash, linewidth = 1.5)
     
     xlims!(ax, (first(krng), last(krng)))
     ylims!(ax, (-0.7, 2.0))

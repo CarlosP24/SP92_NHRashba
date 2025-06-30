@@ -14,6 +14,7 @@ end
     system = nothing
     Gs = nothing
     Es = nothing
+    Ψs = nothing
     LDOS = nothing
     path = nothing
 end
