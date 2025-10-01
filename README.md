@@ -1,6 +1,7 @@
 # Non-Hermitian Skin Effect and Electronic Nonlocal Transport
 
 [![arXiv](https://img.shields.io/badge/arXiv-XXXX.XXXXX-b31b1b.svg)](https://arxiv.org/abs/XXXX.XXXXX)
+[![DOI](https://zenodo.org/badge/966776654.svg)](https://doi.org/10.5281/zenodo.17243672)
 [![Julia v1.11+](https://img.shields.io/badge/Julia-v1.11+-blue.svg)](https://julialang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](LICENSE.md)
 
