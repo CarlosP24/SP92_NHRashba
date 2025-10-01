@@ -4,13 +4,13 @@
 [![Julia v1.11+](https://img.shields.io/badge/Julia-v1.11+-blue.svg)](https://julialang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](LICENSE.md)
 
-This repository contains the Julia code used to perform numerical calculations and generate all figures for the manuscript "Non-Hermitian Skin Effect and Electronic Nonlocal Transport".
+This repository contains the code used to perform numerical calculations and generate all figures for the manuscript "Non-Hermitian Skin Effect and Electronic Nonlocal Transport".
 
 ## Abstract
 
 Open quantum systems governed by non-Hermitian effective Hamiltonians exhibit unique phenomena, such as the non-Hermitian skin effect, where eigenstates localize at system boundaries. We investigate this effect in a Rashba nanowire coupled to a ferromagnetic lead and demonstrate that it can be detected via non-local transport spectroscopy: while local conductance remains symmetric, the non-local conductance becomes non-reciprocal. We account for this behavior using both conventional transport arguments and the framework of non-Hermitian physics. Furthermore, we explain that exceptional points shift in parameter space when transitioning from periodic to open boundary conditions, a phenomenon observed in other non-Hermitian systems but so far not explained. Our results establish transport spectroscopy as a tool to probe non-Hermitian effects in open electronic systems.
 
-## Quick Start
+## About
 
 ### Prerequisites
 
