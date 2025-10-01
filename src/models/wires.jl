@@ -22,6 +22,12 @@ systems["base_wire_long"] = System(systems["base_wire"];
     )
 )
 
+systems["base_wire_long_B"] = System(systems["base_wire"];
+    chain_params = Wire_Params(systems["base_wire"].chain_params;
+        N = 1000,
+    )
+)
+
 systems["base_wire_nh"] = System(systems["base_wire"];
     NH_params = build_NH_params(
         systems["base_wire"].chain_params,
@@ -32,6 +38,13 @@ systems["base_wire_nh"] = System(systems["base_wire"];
 systems["base_wire_nh_long"] = System(systems["base_wire_long"];
     NH_params = build_NH_params(
         systems["base_wire_long"].chain_params,
+        [0.05, 0.05]
+    )
+)
+
+systems["base_wire_nh_long_B"] = System(systems["base_wire_long"];
+    NH_params = build_NH_params(
+        systems["base_wire_long_B"].chain_params,
         [0.05, 0.05]
     )
 )

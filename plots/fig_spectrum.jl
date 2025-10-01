@@ -30,7 +30,9 @@ function fig_spectrum(name::String; dirS = "data/Spectrum", dirG = "data/Conduct
 
     fig = Figure(size = (600, 520), fontsize = 16)
 
-    ax, hmap = plot_conductance(fig[1, 1], Gs[1, 1], ωrng, Vzrng; colorrange = (-maxG, maxG))
+    fig_cond = fig[2, 1] = GridLayout()
+
+    ax, hmap = plot_conductance(fig_cond[1, 1], Gs[1, 1], ωrng, Vzrng; colorrange = (-maxG, maxG))
     ax.yticks = ([-0.2, 0, 0.3], [L"-0.2", L"0", L"0.3"])
     ax.xticks = ([0, 0.3], [L"0",  L"0.3"])
     ax.ylabelpadding = -15
@@ -50,14 +52,14 @@ function fig_spectrum(name::String; dirS = "data/Spectrum", dirG = "data/Conduct
 
     vlines!(ax, Vγ1 ; ymin = 0.3, ymax = 0.6, color = :white, linestyle = :dash, label = L"$\gamma_y/\left|\kappa_1\right|$", linewidth = 2)
 
-    vlines!(ax, [ep(2, γ, system.chain_params)]; ymin = 0.6, ymax = 0.9, color = :navyblue, linestyle = :dash, label = L"$\gamma_y/\left|\kappa_2\right|$", linewidth = 2)
+    vlines!(ax, [ep(2, γ, system.chain_params)]; ymin = 0.6, ymax = 0.9, color = :blue, linestyle = :dash, label = L"$\gamma_y/\left|\kappa_2\right|$", linewidth = 2)
 
-    Colorbar(fig[1, 2]; colormap = cgrad(:balance, 256)[128:end], limits = (0, 1), label = L"$G_{\text{RR}}$ ($e^2/h$)", ticks = ([0, 1], [L"0", niceticklabel(maxG)]), labelpadding = -30)
+    Colorbar(fig_cond[1, 2]; colormap = cgrad(:balance, 256)[128:end], limits = (0, 1), label = L"$G_{\text{RR}}$ ($e^2/h$)", ticks = ([0, 1], [L"0", niceticklabel(maxG)]), labelpadding = -30)
 
     axislegend( ax; position = (1, 0.6), orientation = :horizontal, padding = (0, 0, 10, 0), framevisible = false)
-    colgap!(fig.layout, 1, 5)
+    colgap!(fig_cond, 1, 5)
 
-    fig_bands = fig[2, 1] = GridLayout()
+    fig_bands = fig[1, 1] = GridLayout()
     krngp = range(0.001, 3π/4, length = 1000)
     krngn = range(-3π/4, -0.001, length = 1000)
     krng = range(-3π/4, 3π/4, length = 1000)
@@ -128,9 +130,9 @@ function fig_spectrum(name::String; dirS = "data/Spectrum", dirG = "data/Conduct
     Label(fig_bands[1, 2, Top()], L"$B > \gamma_y$"; padding = (0, 0, 5, 0))
 
 
-    Label(fig[1, 1, TopLeft()], "a"; padding = (-40, 0, -25, 0), labstyle...)
-    Label(fig_bands[1, 1, TopLeft()], "b"; padding = (-40, 0, 0, 0), labstyle...)
-    Label(fig_bands[1, 2, TopLeft()], "c"; padding = (0, 0, 0, 0), labstyle...)
+    Label(fig_bands[1, 1, TopLeft()], "a"; padding = (-40, 0, 0, 0), labstyle...)
+    Label(fig_bands[1, 2, TopLeft()], "b"; padding = (0, 0, 0, 0), labstyle...)
+    Label(fig_cond[1, 1, TopLeft()], "c"; padding = (-40, 0, -25, 0), labstyle...)
 
     rowgap!(fig.layout, 1, 5)
 
