@@ -133,7 +133,7 @@ If you use this code in your research, please cite:
 ```bibtex
 @misc{Paya:25,
   title={Non-Hermitian Skin Effect and Electronic Nonlocal Transport}, 
-  author={Carlos Payá and Pablo San-Jose and Elsa Prada and Ramón Aguado},
+  author={Carlos Payá and Oliver Solow and Elsa Prada and Ramón Aguado and Karsten Flensberg},
   year={2025},
   eprint={2510.00921},
   archivePrefix={arXiv},
