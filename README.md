@@ -1,6 +1,6 @@
 # Non-Hermitian Skin Effect and Electronic Nonlocal Transport
 
-[![arXiv](https://img.shields.io/badge/arXiv-XXXX.XXXXX-b31b1b.svg)](https://arxiv.org/abs/XXXX.XXXXX)
+[![arXiv](https://img.shields.io/badge/arXiv-2510.00921-b31b1b.svg)](https://arxiv.org/abs/2510.00921)
 [![DOI](https://zenodo.org/badge/966776654.svg)](https://doi.org/10.5281/zenodo.17243672)
 [![Julia v1.11+](https://img.shields.io/badge/Julia-v1.11+-blue.svg)](https://julialang.org/)
 [![Quantica badge](https://raw.githubusercontent.com/pablosanjose/Quantica.jl/master/docs/src/assets/badge.svg)](https://github.com/pablosanjose/Quantica.jl)
@@ -128,7 +128,23 @@ All figures are saved as PDF files in `plots/figures/`.
 
 ## Citation
 
-If you use this code in your research, please cite the manuscript and the Zenodo repository.
+If you use this code in your research, please cite:
+
+```bibtex
+@misc{Paya:25,
+  title={Non-Hermitian Skin Effect and Electronic Nonlocal Transport}, 
+  author={Carlos Payá and Pablo San-Jose and Elsa Prada and Ramón Aguado},
+  year={2025},
+  eprint={2510.00921},
+  archivePrefix={arXiv},
+  primaryClass={cond-mat.mes-hall},
+  url={https://arxiv.org/abs/2510.00921}
+}
+```
+
+You can also cite the Zenodo repository for the code:
+
+[![DOI](https://zenodo.org/badge/966776654.svg)](https://doi.org/10.5281/zenodo.17243672)
 
 ## License
 
